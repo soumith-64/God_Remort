@@ -1,0 +1,10 @@
+{
+  "venvPath": "agent",
+  "venv": ".venv",
+  "extraPaths": [
+    "agent",
+    "agent/.venv/Lib/site-packages"
+  ],
+  "pythonVersion": "3.12",
+  "reportMissingImports": "none"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "omnicontrol",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "web:dev": "npm --prefix apps/web run dev",
+    "web:build": "npm --prefix apps/web run build",
+    "web:start": "npm --prefix apps/web run start",
+    "agent:run": ".\\agent\\.venv\\Scripts\\python.exe agent/main.py",
+    "agent:test": ".\\agent\\.venv\\Scripts\\pytest.exe agent/tests"
+  }
+}

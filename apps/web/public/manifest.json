@@ -1,0 +1,17 @@
+{
+  "name": "OMNICONTROL",
+  "short_name": "OMNICONTROL",
+  "description": "Complete Laptop Remote Control Platform",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0A0A0C",
+  "theme_color": "#0A0A0C",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

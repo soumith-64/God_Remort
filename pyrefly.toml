@@ -1,0 +1,9 @@
+# Pyrefly configuration for OmniControl
+search-path = [
+    "agent/.venv/Lib/site-packages",
+    "agent",
+    "."
+]
+
+[errors]
+missing-import = false
