@@ -129,46 +129,44 @@ class ScreenStreamer:
     def _draw_cursor_on_frame(self, frame: np.ndarray, target_w: int, target_h: int):
         """Renders a high-visibility, crisp cursor pointer onto the frame."""
         try:
-            ci = CURSORINFO()
-            ci.cbSize = ctypes.sizeof(CURSORINFO)
-            got_info = bool(user32.GetCursorInfo(ctypes.byref(ci)))
-            if got_info:
-                # If cursor is hidden (flags & 1 == 0), don't draw
-                if not (ci.flags & 1):
-                    return
-                raw_x = ci.ptScreenPos.x - self._monitor.get("left", 0)
-                raw_y = ci.ptScreenPos.y - self._monitor.get("top", 0)
-            else:
-                pt = POINT()
-                user32.GetCursorPos(ctypes.byref(pt))
+            ensure_input_desktop()
+            pt = POINT()
+            got_pos = bool(user32.GetCursorPos(ctypes.byref(pt)))
+            if got_pos and (pt.x != 0 or pt.y != 0):
                 raw_x = pt.x - self._monitor.get("left", 0)
                 raw_y = pt.y - self._monitor.get("top", 0)
+                self._current_mouse_x = raw_x
+                self._current_mouse_y = raw_y
+            else:
+                raw_x = getattr(self, "_current_mouse_x", self.width // 2)
+                raw_y = getattr(self, "_current_mouse_y", self.height // 2)
 
             cx = int(raw_x * self.scale)
             cy = int(raw_y * self.scale)
 
             if 0 <= cx < target_w and 0 <= cy < target_h:
-                c_scale = max(1.0, 1.4 * self.scale)
+                # Use prominent scale so cursor is clearly visible on mobile screens
+                c_scale = max(1.2, 1.8 * self.scale)
 
-                # 1. Active tip glowing pinpoint reticle (BGR cyan: 255, 230, 0)
-                cv2.circle(frame, (cx, cy), max(2, int(4 * c_scale)), (255, 230, 0), -1)
-                cv2.circle(frame, (cx, cy), max(3, int(6 * c_scale)), (0, 0, 0), 1)
-
-                # 2. Modern arrow pointer polygon
+                # 1. Outer high-contrast pointer polygon (arrow)
                 pts = np.array([
                     [cx, cy],
-                    [cx, min(target_h - 1, cy + int(19 * c_scale))],
-                    [min(target_w - 1, cx + int(5 * c_scale)), min(target_h - 1, cy + int(14 * c_scale))],
-                    [min(target_w - 1, cx + int(9 * c_scale)), min(target_h - 1, cy + int(22 * c_scale))],
-                    [min(target_w - 1, cx + int(12 * c_scale)), min(target_h - 1, cy + int(21 * c_scale))],
-                    [min(target_w - 1, cx + int(8 * c_scale)), min(target_h - 1, cy + int(13 * c_scale))],
-                    [min(target_w - 1, cx + int(14 * c_scale)), min(target_h - 1, cy + int(13 * c_scale))],
+                    [cx, min(target_h - 1, cy + int(24 * c_scale))],
+                    [min(target_w - 1, cx + int(7 * c_scale)), min(target_h - 1, cy + int(18 * c_scale))],
+                    [min(target_w - 1, cx + int(12 * c_scale)), min(target_h - 1, cy + int(28 * c_scale))],
+                    [min(target_w - 1, cx + int(16 * c_scale)), min(target_h - 1, cy + int(26 * c_scale))],
+                    [min(target_w - 1, cx + int(11 * c_scale)), min(target_h - 1, cy + int(16 * c_scale))],
+                    [min(target_w - 1, cx + int(18 * c_scale)), min(target_h - 1, cy + int(16 * c_scale))],
                 ], dtype=np.int32)
 
-                # Thick black outer contour (guarantees visibility on white backgrounds)
-                cv2.polylines(frame, [pts], isClosed=True, color=(0, 0, 0), thickness=max(2, int(3 * c_scale)), lineType=cv2.LINE_AA)
-                # Crisp bright white fill (guarantees visibility on dark backgrounds)
+                # Thick black outer contour (guarantees visibility on white documents / web pages)
+                cv2.polylines(frame, [pts], isClosed=True, color=(0, 0, 0), thickness=max(2, int(4 * c_scale)), lineType=cv2.LINE_AA)
+                # Crisp bright white fill (guarantees visibility on dark backgrounds / terminal / IDE)
                 cv2.fillPoly(frame, [pts], color=(255, 255, 255), lineType=cv2.LINE_AA)
+
+                # 2. Glowing Cyan pinpoint reticle at the exact apex (cx, cy)
+                cv2.circle(frame, (cx, cy), max(3, int(4 * c_scale)), (255, 230, 0), -1)  # BGR Cyan
+                cv2.circle(frame, (cx, cy), max(4, int(5 * c_scale)), (0, 0, 0), 1)
         except Exception:
             pass
 
@@ -207,12 +205,16 @@ class ScreenStreamer:
     # ----------------- Zero-Latency Native Win32 Input Injection -----------------
     def handle_mouse_move(self, x_ratio: float, y_ratio: float):
         """Instantaneous Win32 SetCursorPos (0.00ms execution)."""
+        ensure_input_desktop()
         x = int(max(0.0, min(1.0, x_ratio)) * (self.width - 1))
         y = int(max(0.0, min(1.0, y_ratio)) * (self.height - 1))
         user32.SetCursorPos(x, y)
+        self._current_mouse_x = x
+        self._current_mouse_y = y
 
     def handle_mouse_move_relative(self, dx: float, dy: float):
         """Relative cursor motion with subpixel precision for trackpad & D-pad nudging."""
+        ensure_input_desktop()
         self._accum_dx += dx
         self._accum_dy += dy
         step_x = int(self._accum_dx)
@@ -221,10 +223,14 @@ class ScreenStreamer:
             self._accum_dx -= step_x
             self._accum_dy -= step_y
             pt = POINT()
-            user32.GetCursorPos(ctypes.byref(pt))
-            new_x = max(0, min(self.width - 1, pt.x + step_x))
-            new_y = max(0, min(self.height - 1, pt.y + step_y))
+            got_pos = bool(user32.GetCursorPos(ctypes.byref(pt)))
+            base_x = pt.x if got_pos and (pt.x != 0 or pt.y != 0) else getattr(self, "_current_mouse_x", self.width // 2)
+            base_y = pt.y if got_pos and (pt.x != 0 or pt.y != 0) else getattr(self, "_current_mouse_y", self.height // 2)
+            new_x = max(0, min(self.width - 1, base_x + step_x))
+            new_y = max(0, min(self.height - 1, base_y + step_y))
             user32.SetCursorPos(new_x, new_y)
+            self._current_mouse_x = new_x
+            self._current_mouse_y = new_y
 
     def handle_mouse_click(self, x_ratio: Optional[float] = None, y_ratio: Optional[float] = None, button: str = "left", double: bool = False):
         if x_ratio is not None and y_ratio is not None:

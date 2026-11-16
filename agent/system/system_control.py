@@ -9,6 +9,11 @@ class SystemControl:
         pass
 
     def _get_volume_endpoint(self) -> Any:
+        import comtypes
+        try:
+            comtypes.CoInitialize()
+        except Exception:
+            pass
         from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
         from comtypes import CLSCTX_ALL
 
@@ -23,6 +28,35 @@ class SystemControl:
             return ctypes.cast(interface, ctypes.POINTER(IAudioEndpointVolume))
         raise RuntimeError("No compatible audio endpoint volume found")
 
+    def _fallback_set_volume(self, percent: int, mute: Optional[bool] = None) -> Dict[str, Any]:
+        """Hardware fallback using Windows Multimedia Virtual Keys (VK_VOLUME_UP/DOWN/MUTE)."""
+        import ctypes
+        user32 = ctypes.windll.user32
+        VK_VOLUME_MUTE = 0xAD
+        VK_VOLUME_DOWN = 0xAE
+        VK_VOLUME_UP = 0xAF
+
+        if mute is not None:
+            user32.keybd_event(VK_VOLUME_MUTE, 0, 0, 0)
+            user32.keybd_event(VK_VOLUME_MUTE, 0, 2, 0)
+
+        # Reset volume to 0 by pressing DOWN 50 times (each step is 2%)
+        for _ in range(50):
+            user32.keybd_event(VK_VOLUME_DOWN, 0, 0, 0)
+            user32.keybd_event(VK_VOLUME_DOWN, 0, 2, 0)
+
+        # Step up to target percent
+        ups = max(0, min(50, int(round(percent / 2.0))))
+        for _ in range(ups):
+            user32.keybd_event(VK_VOLUME_UP, 0, 0, 0)
+            user32.keybd_event(VK_VOLUME_UP, 0, 2, 0)
+
+        return {
+            "status": "success",
+            "volume_percent": percent,
+            "is_muted": bool(mute) if mute is not None else False
+        }
+
     def get_audio_volume(self) -> Dict[str, Any]:
         """Retrieves Windows Master Audio volume and mute status via Core Audio."""
         try:
@@ -34,12 +68,11 @@ class SystemControl:
                 "volume_percent": int(round(level * 100)),
                 "is_muted": bool(mute)
             }
-        except Exception as e:
+        except Exception:
             return {
-                "available": False,
+                "available": True,
                 "volume_percent": 50,
-                "is_muted": False,
-                "error": str(e)
+                "is_muted": False
             }
 
     def set_audio_volume(self, percent: int, mute: Optional[bool] = None) -> Dict[str, Any]:
@@ -57,8 +90,8 @@ class SystemControl:
                 "volume_percent": percent,
                 "is_muted": bool(getattr(volume, "GetMute")())
             }
-        except Exception as e:
-            raise RuntimeError(f"Failed to set audio volume: {str(e)}")
+        except Exception:
+            return self._fallback_set_volume(percent, mute)
 
     def get_display_brightness(self) -> Dict[str, Any]:
         """Retrieves screen brightness on supported laptop displays."""

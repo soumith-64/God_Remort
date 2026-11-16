@@ -23,8 +23,11 @@ import {
   Unlock,
   Mic,
   Sliders,
-  Move
+  Move,
+  Volume1,
+  Volume2
 } from "lucide-react";
+import { api } from "@/lib/api";
 
 export function DesktopView() {
   const { 
@@ -441,6 +444,37 @@ export function DesktopView() {
             title="Voice Command Assistant"
           >
             <Mic className="w-4 h-4 animate-pulse-slow" />
+          </button>
+
+          {/* Quick Volume Controls */}
+          <button
+            onClick={async () => {
+              try {
+                const current = await api.system.getAudio();
+                const next = Math.max(0, current.volume_percent - 10);
+                await api.system.setAudio(next);
+                addNotification({ title: "Volume", message: `${next}%`, type: "info" });
+              } catch (_) {}
+            }}
+            className="p-2 sm:p-2.5 rounded-xl bg-omni-surface border border-omni-border text-omni-muted hover:text-white active:scale-95 transition-all shrink-0"
+            title="Volume Down (-10%)"
+          >
+            <Volume1 className="w-4 h-4" />
+          </button>
+
+          <button
+            onClick={async () => {
+              try {
+                const current = await api.system.getAudio();
+                const next = Math.min(100, current.volume_percent + 10);
+                await api.system.setAudio(next);
+                addNotification({ title: "Volume", message: `${next}%`, type: "info" });
+              } catch (_) {}
+            }}
+            className="p-2 sm:p-2.5 rounded-xl bg-omni-surface border border-omni-border text-omni-muted hover:text-white active:scale-95 transition-all shrink-0"
+            title="Volume Up (+10%)"
+          >
+            <Volume2 className="w-4 h-4" />
           </button>
 
           {/* Right Click Armed Toggle */}

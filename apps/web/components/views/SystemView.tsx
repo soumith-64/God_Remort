@@ -201,6 +201,44 @@ export function SystemView() {
               onChange={(e) => handleVolumeChange(Number(e.target.value))}
               className="w-full accent-cyan-400 cursor-pointer h-2 bg-omni-dark rounded-lg"
             />
+            {/* Quick 1-Tap Volume Presets */}
+            <div className="flex items-center gap-2 pt-1.5">
+              <button
+                type="button"
+                onClick={() => handleVolumeChange(Math.max(0, volume - 10))}
+                className="flex-1 py-1.5 rounded-xl bg-omni-card border border-omni-border text-xs font-semibold text-white hover:border-omni-cyan active:scale-95 transition-all"
+              >
+                - 10%
+              </button>
+              <button
+                type="button"
+                onClick={() => handleVolumeChange(Math.min(100, volume + 10))}
+                className="flex-1 py-1.5 rounded-xl bg-omni-card border border-omni-border text-xs font-semibold text-white hover:border-omni-cyan active:scale-95 transition-all"
+              >
+                + 10%
+              </button>
+              <button
+                type="button"
+                onClick={() => handleVolumeChange(0)}
+                className="px-3 py-1.5 rounded-xl bg-omni-card border border-omni-border text-xs font-semibold text-omni-muted hover:text-white active:scale-95 transition-all"
+              >
+                0%
+              </button>
+              <button
+                type="button"
+                onClick={() => handleVolumeChange(50)}
+                className="px-3 py-1.5 rounded-xl bg-omni-card border border-omni-border text-xs font-semibold text-omni-muted hover:text-white active:scale-95 transition-all"
+              >
+                50%
+              </button>
+              <button
+                type="button"
+                onClick={() => handleVolumeChange(100)}
+                className="px-3 py-1.5 rounded-xl bg-omni-card border border-omni-border text-xs font-semibold text-omni-muted hover:text-white active:scale-95 transition-all"
+              >
+                100%
+              </button>
+            </div>
           </div>
         </div>
 
