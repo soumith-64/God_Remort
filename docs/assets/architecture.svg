@@ -1,0 +1,129 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 320" width="100%" height="auto" style="background:#090A10;border-radius:14px;border:1px solid rgba(0,229,255,0.18);">
+  <defs>
+    <radialGradient id="nodeGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#00E5FF" stop-opacity="0.12" />
+      <stop offset="100%" stop-color="#090A10" stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id="streamLine" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00E5FF" />
+      <stop offset="50%" stop-color="#818CF8" />
+      <stop offset="100%" stop-color="#00E5FF" />
+    </linearGradient>
+
+    <style>
+      @keyframes flowForward {
+        0% { stroke-dashoffset: 40; }
+        100% { stroke-dashoffset: 0; }
+      }
+      @keyframes flowReverse {
+        0% { stroke-dashoffset: 0; }
+        100% { stroke-dashoffset: 40; }
+      }
+      @keyframes pulseGlow {
+        0%, 100% { opacity: 0.4; }
+        50% { opacity: 0.9; }
+      }
+      .stream-forward {
+        stroke-dasharray: 8 6;
+        animation: flowForward 1.2s linear infinite;
+      }
+      .stream-reverse {
+        stroke-dasharray: 8 6;
+        animation: flowReverse 1.5s linear infinite;
+      }
+      .live-pulse {
+        animation: pulseGlow 2.5s ease-in-out infinite;
+      }
+      .mono-text {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "JetBrains Mono", monospace;
+      }
+    </style>
+  </defs>
+
+  <!-- Left Node: Mobile Web Client -->
+  <g transform="translate(60, 40)">
+    <rect width="250" height="240" rx="16" fill="#0D111F" stroke="#00E5FF" stroke-width="1.5" />
+    <circle cx="125" cy="120" r="100" fill="url(#nodeGlow)" />
+    
+    <!-- Phone Icon Header -->
+    <rect x="24" y="24" width="40" height="40" rx="10" fill="#0E2238" stroke="#00E5FF" stroke-width="1" />
+    <text x="44" y="49" class="mono-text" font-size="20" text-anchor="middle">📱</text>
+    
+    <text x="76" y="42" class="mono-text" font-size="14" font-weight="700" fill="#FFFFFF">Mobile / Web App</text>
+    <text x="76" y="58" class="mono-text" font-size="10" font-weight="600" fill="#00E5FF">Next.js 14 • PWA • Edge</text>
+
+    <!-- Component Stack -->
+    <g transform="translate(20, 84)">
+      <rect width="210" height="32" rx="6" fill="#141B2D" stroke="rgba(255,255,255,0.06)" />
+      <text x="14" y="20" class="mono-text" font-size="11" fill="#94A3B8">🖥️ 60FPS Bitmap Canvas</text>
+      
+      <rect y="40" width="210" height="32" rx="6" fill="#141B2D" stroke="rgba(255,255,255,0.06)" />
+      <text x="14" y="60" class="mono-text" font-size="11" fill="#94A3B8">🖱️ Touchpad &amp; Nudge D-Pad</text>
+
+      <rect y="80" width="210" height="32" rx="6" fill="#141B2D" stroke="rgba(255,255,255,0.06)" />
+      <text x="14" y="100" class="mono-text" font-size="11" fill="#94A3B8">🎙️ Voice Speech Engine</text>
+
+      <rect y="120" width="210" height="32" rx="6" fill="#141B2D" stroke="rgba(255,255,255,0.06)" />
+      <text x="14" y="140" class="mono-text" font-size="11" fill="#38BDF8">⚡ Flow Control (frame_ack)</text>
+    </g>
+  </g>
+
+  <!-- Animated Center Network Pipes -->
+  <g>
+    <!-- Screen Stream Pipeline (Laptop -> Phone) -->
+    <path d="M 690 100 L 310 100" fill="none" stroke="#00E5FF" stroke-width="2.5" class="stream-forward" />
+    <circle cx="500" cy="80" r="4" fill="#00E5FF" class="live-pulse" />
+    <text x="500" y="92" class="mono-text" font-size="11" font-weight="700" fill="#00E5FF" text-anchor="middle">
+      ◄ Live Screen JPEG Stream (0-Bufferbloat)
+    </text>
+
+    <!-- Input Control Pipeline (Phone -> Laptop) -->
+    <path d="M 310 160 L 690 160" fill="none" stroke="#818CF8" stroke-width="2.5" class="stream-reverse" />
+    <circle cx="500" cy="180" r="4" fill="#818CF8" class="live-pulse" />
+    <text x="500" y="152" class="mono-text" font-size="11" font-weight="700" fill="#818CF8" text-anchor="middle">
+      Mouse, Keyboard &amp; Voice Input (0.0ms delay) ►
+    </text>
+
+    <!-- Frame ACK Flow Control Pipeline -->
+    <path d="M 310 220 L 690 220" fill="none" stroke="#34D399" stroke-width="2" class="stream-reverse" />
+    <text x="500" y="240" class="mono-text" font-size="10" font-weight="600" fill="#34D399" text-anchor="middle">
+      Leaky-Bucket frame_ack Handshake ►
+    </text>
+
+    <!-- Center Security Badge -->
+    <g transform="translate(425, 260)">
+      <rect width="150" height="26" rx="13" fill="#111827" stroke="rgba(0,229,255,0.3)" stroke-width="1" />
+      <text x="75" y="17" class="mono-text" font-size="10" font-weight="700" fill="#38BDF8" text-anchor="middle">
+        🔒 HMAC-SHA256 JWT
+      </text>
+    </g>
+  </g>
+
+  <!-- Right Node: Laptop Companion Agent -->
+  <g transform="translate(690, 40)">
+    <rect width="250" height="240" rx="16" fill="#0D111F" stroke="#818CF8" stroke-width="1.5" />
+    <circle cx="125" cy="120" r="100" fill="url(#nodeGlow)" />
+    
+    <!-- Laptop Icon Header -->
+    <rect x="24" y="24" width="40" height="40" rx="10" fill="#1E1B4B" stroke="#818CF8" stroke-width="1" />
+    <text x="44" y="49" class="mono-text" font-size="20" text-anchor="middle">💻</text>
+    
+    <text x="76" y="42" class="mono-text" font-size="14" font-weight="700" fill="#FFFFFF">Windows 11 Agent</text>
+    <text x="76" y="58" class="mono-text" font-size="10" font-weight="600" fill="#818CF8">FastAPI • MSS • Win32 API</text>
+
+    <!-- Component Stack -->
+    <g transform="translate(20, 84)">
+      <rect width="210" height="32" rx="6" fill="#141B2D" stroke="rgba(255,255,255,0.06)" />
+      <text x="14" y="20" class="mono-text" font-size="11" fill="#94A3B8">🎯 Hardware Cursor Burn-in</text>
+      
+      <rect y="40" width="210" height="32" rx="6" fill="#141B2D" stroke="rgba(255,255,255,0.06)" />
+      <text x="14" y="60" class="mono-text" font-size="11" fill="#94A3B8">🚀 Universal App &amp; LNK Resolver</text>
+
+      <rect y="80" width="210" height="32" rx="6" fill="#141B2D" stroke="rgba(255,255,255,0.06)" />
+      <text x="14" y="100" class="mono-text" font-size="11" fill="#94A3B8">🔊 Pycaw Audio &amp; Power API</text>
+
+      <rect y="120" width="210" height="32" rx="6" fill="#141B2D" stroke="rgba(255,255,255,0.06)" />
+      <text x="14" y="140" class="mono-text" font-size="11" fill="#A5B4FC">💻 Interactive PowerShell PTY</text>
+    </g>
+  </g>
+</svg>

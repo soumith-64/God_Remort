@@ -1,0 +1,240 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 420" width="100%" height="auto" style="background:#090A0F;border-radius:16px;border:1px solid rgba(0,229,255,0.2);box-shadow:0 20px 50px rgba(0,0,0,0.8);">
+  <defs>
+    <!-- Background Gradients -->
+    <radialGradient id="cyanGlow" cx="20%" cy="30%" r="60%">
+      <stop offset="0%" stop-color="#00E5FF" stop-opacity="0.18" />
+      <stop offset="100%" stop-color="#090A0F" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="indigoGlow" cx="80%" cy="70%" r="65%">
+      <stop offset="0%" stop-color="#6366F1" stop-opacity="0.22" />
+      <stop offset="100%" stop-color="#090A0F" stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id="textGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="40%" stop-color="#E0F7FA" />
+      <stop offset="70%" stop-color="#00E5FF" />
+      <stop offset="100%" stop-color="#818CF8" />
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#121526" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#0B0D18" stop-opacity="0.9" />
+    </linearGradient>
+    <linearGradient id="borderGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="rgba(0,229,255,0.4)" />
+      <stop offset="50%" stop-color="rgba(99,102,241,0.2)" />
+      <stop offset="100%" stop-color="rgba(0,229,255,0.4)" />
+    </linearGradient>
+
+    <!-- Glowing Filters -->
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+    <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+
+    <style>
+      @keyframes rotateRing {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+      @keyframes counterRotate {
+        from { transform: rotate(360deg); }
+        to { transform: rotate(0deg); }
+      }
+      @keyframes pulseRing {
+        0%, 100% { transform: scale(1); opacity: 0.3; }
+        50% { transform: scale(1.08); opacity: 0.7; }
+      }
+      @keyframes radarSweep {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      @keyframes blinkDot {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.3; transform: scale(0.85); }
+      }
+      @keyframes waveFloat {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-6px); }
+      }
+      @keyframes textGleam {
+        0%, 100% { filter: drop-shadow(0 0 12px rgba(0,229,255,0.4)); }
+        50% { filter: drop-shadow(0 0 24px rgba(99,102,241,0.7)); }
+      }
+      .rotating-ring {
+        transform-origin: 1040px 180px;
+        animation: rotateRing 20s linear infinite;
+      }
+      .counter-ring {
+        transform-origin: 1040px 180px;
+        animation: counterRotate 28s linear infinite;
+      }
+      .pulsing-core {
+        transform-origin: 1040px 180px;
+        animation: pulseRing 4s ease-in-out infinite;
+      }
+      .live-dot {
+        transform-origin: center;
+        animation: blinkDot 1.8s ease-in-out infinite;
+      }
+      .floating-badge {
+        animation: waveFloat 5s ease-in-out infinite;
+      }
+      .neon-title {
+        animation: textGleam 4s ease-in-out infinite;
+      }
+      .hud-text {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "JetBrains Mono", monospace;
+      }
+    </style>
+  </defs>
+
+  <!-- Background Grids & Ambient Lights -->
+  <rect width="1200" height="420" fill="#090A0F" />
+  <rect width="1200" height="420" fill="url(#cyanGlow)" />
+  <rect width="1200" height="420" fill="url(#indigoGlow)" />
+
+  <!-- Subtle Cyber Grid -->
+  <g stroke="rgba(255,255,255,0.03)" stroke-width="1">
+    <line x1="0" y1="70" x2="1200" y2="70" />
+    <line x1="0" y1="140" x2="1200" y2="140" />
+    <line x1="0" y1="210" x2="1200" y2="210" />
+    <line x1="0" y1="280" x2="1200" y2="280" />
+    <line x1="0" y1="350" x2="1200" y2="350" />
+    <line x1="120" y1="0" x2="120" y2="420" />
+    <line x1="240" y1="0" x2="240" y2="420" />
+    <line x1="360" y1="0" x2="360" y2="420" />
+    <line x1="480" y1="0" x2="480" y2="420" />
+    <line x1="600" y1="0" x2="600" y2="420" />
+    <line x1="720" y1="0" x2="720" y2="420" />
+    <line x1="840" y1="0" x2="840" y2="420" />
+    <line x1="960" y1="0" x2="960" y2="420" />
+    <line x1="1080" y1="0" x2="1080" y2="420" />
+  </g>
+
+  <!-- Animated HUD Radar / Gyro Widget (Right Side) -->
+  <g>
+    <!-- Background glow for radar -->
+    <circle cx="1040" cy="180" r="130" fill="none" stroke="rgba(0,229,255,0.08)" stroke-width="2" />
+    <circle cx="1040" cy="180" r="110" fill="none" stroke="rgba(99,102,241,0.12)" stroke-width="1" />
+    <circle cx="1040" cy="180" r="80" class="pulsing-core" fill="none" stroke="rgba(0,229,255,0.25)" stroke-width="1.5" />
+    
+    <!-- Outer dashed rotating ring -->
+    <circle cx="1040" cy="180" r="120" class="rotating-ring" fill="none" stroke="#00E5FF" stroke-width="1.5" stroke-dasharray="8 14 2 14" opacity="0.6" />
+    
+    <!-- Inner counter rotating ring with target ticks -->
+    <circle cx="1040" cy="180" r="95" class="counter-ring" fill="none" stroke="#818CF8" stroke-width="2" stroke-dasharray="24 16 4 16" opacity="0.5" />
+
+    <!-- Crosshair reticle -->
+    <line x1="1040" y1="40" x2="1040" y2="320" stroke="rgba(0,229,255,0.15)" stroke-width="1" stroke-dasharray="4 4" />
+    <line x1="900" y1="180" x2="1180" y2="180" stroke="rgba(0,229,255,0.15)" stroke-width="1" stroke-dasharray="4 4" />
+
+    <!-- Center Laptop Orb -->
+    <circle cx="1040" cy="180" r="28" fill="#0E1222" stroke="#00E5FF" stroke-width="2" filter="url(#softGlow)" />
+    <!-- Laptop Icon SVG path -->
+    <path d="M 1030 172 L 1050 172 A 2 2 0 0 1 1052 174 L 1052 184 A 2 2 0 0 1 1050 186 L 1030 186 A 2 2 0 0 1 1028 184 L 1028 174 A 2 2 0 0 1 1030 172 Z M 1024 188 L 1056 188 A 2 2 0 0 1 1058 190 L 1022 190 A 2 2 0 0 1 1024 188 Z" fill="#00E5FF" />
+    
+    <!-- Orbiting Target Satellites -->
+    <circle cx="1040" cy="60" r="4" fill="#00E5FF" class="rotating-ring" filter="url(#softGlow)" />
+    <circle cx="1160" cy="180" r="3" fill="#818CF8" class="counter-ring" />
+  </g>
+
+  <!-- Left Content: Status Pill -->
+  <g transform="translate(60, 52)">
+    <rect width="210" height="28" rx="14" fill="#0E1626" stroke="rgba(0,229,255,0.3)" stroke-width="1" />
+    <circle cx="18" cy="14" r="5" fill="#10B981" class="live-dot" filter="url(#softGlow)" />
+    <text x="32" y="18" class="hud-text" font-size="11" font-weight="700" fill="#34D399" letter-spacing="1.2">SYSTEM LIVE &amp; READY</text>
+  </g>
+
+  <!-- Version Tag -->
+  <g transform="translate(285, 52)">
+    <rect width="90" height="28" rx="14" fill="#15122E" stroke="rgba(129,140,248,0.3)" stroke-width="1" />
+    <text x="45" y="18" class="hud-text" font-size="11" font-weight="700" fill="#A5B4FC" text-anchor="middle" letter-spacing="1">v1.2 PRO</text>
+  </g>
+
+  <!-- Main Brand Title -->
+  <g transform="translate(60, 145)" class="neon-title">
+    <text x="0" y="0" class="hud-text" font-size="62" font-weight="900" fill="url(#textGrad)" letter-spacing="2">OMNICONTROL</text>
+  </g>
+
+  <!-- Dynamic Tagline -->
+  <g transform="translate(62, 185)">
+    <text x="0" y="0" class="hud-text" font-size="16" font-weight="600" fill="#94A3B8" letter-spacing="2.5">
+      WIRELESS LAPTOP COMMAND CENTRE FOR MOBILE &amp; TABLET
+    </text>
+  </g>
+
+  <g transform="translate(62, 212)">
+    <text x="0" y="0" class="hud-text" font-size="13" font-weight="400" fill="#64748B" letter-spacing="0.5">
+      Ultra Low-Latency Touch Remote Desktop • Precision Mouse D-Pad • PIN Voice AI • Full Windows 11 API Access
+    </text>
+  </g>
+
+  <!-- 4 Feature Badges / Action Chips -->
+  <g transform="translate(60, 252)">
+    <!-- Card 1: Remote Desktop -->
+    <g transform="translate(0, 0)">
+      <rect width="170" height="58" rx="12" fill="url(#cardGrad)" stroke="url(#borderGrad)" stroke-width="1" />
+      <circle cx="28" cy="29" r="14" fill="rgba(0,229,255,0.12)" />
+      <text x="28" y="34" class="hud-text" font-size="14" text-anchor="middle">⚡</text>
+      <text x="50" y="24" class="hud-text" font-size="12" font-weight="700" fill="#FFFFFF">60FPS Stream</text>
+      <text x="50" y="42" class="hud-text" font-size="10" font-weight="400" fill="#00E5FF">MSS + Frame ACK</text>
+    </g>
+
+    <!-- Card 2: Precision Mouse -->
+    <g transform="translate(185, 0)">
+      <rect width="170" height="58" rx="12" fill="url(#cardGrad)" stroke="url(#borderGrad)" stroke-width="1" />
+      <circle cx="28" cy="29" r="14" fill="rgba(99,102,241,0.15)" />
+      <text x="28" y="34" class="hud-text" font-size="14" text-anchor="middle">🖱️</text>
+      <text x="50" y="24" class="hud-text" font-size="12" font-weight="700" fill="#FFFFFF">Virtual Mouse</text>
+      <text x="50" y="42" class="hud-text" font-size="10" font-weight="400" fill="#818CF8">Nudge D-Pad &amp; Scroll</text>
+    </g>
+
+    <!-- Card 3: Voice AI Assistant -->
+    <g transform="translate(370, 0)">
+      <rect width="170" height="58" rx="12" fill="url(#cardGrad)" stroke="url(#borderGrad)" stroke-width="1" />
+      <circle cx="28" cy="29" r="14" fill="rgba(244,63,94,0.15)" />
+      <text x="28" y="34" class="hud-text" font-size="14" text-anchor="middle">🎙️</text>
+      <text x="50" y="24" class="hud-text" font-size="12" font-weight="700" fill="#FFFFFF">Voice Control</text>
+      <text x="50" y="42" class="hud-text" font-size="10" font-weight="400" fill="#FB7185">PIN Secured &amp; TTS</text>
+    </g>
+
+    <!-- Card 4: Universal App Launcher -->
+    <g transform="translate(555, 0)">
+      <rect width="180" height="58" rx="12" fill="url(#cardGrad)" stroke="url(#borderGrad)" stroke-width="1" />
+      <circle cx="28" cy="29" r="14" fill="rgba(16,185,129,0.15)" />
+      <text x="28" y="34" class="hud-text" font-size="14" text-anchor="middle">🚀</text>
+      <text x="50" y="24" class="hud-text" font-size="12" font-weight="700" fill="#FFFFFF">App Launcher</text>
+      <text x="50" y="42" class="hud-text" font-size="10" font-weight="400" fill="#34D399">Start Menu &amp; IDEs</text>
+    </g>
+  </g>
+
+  <!-- Bottom Telemetry Ticker Line -->
+  <g transform="translate(60, 360)">
+    <rect width="1080" height="34" rx="8" fill="#0C0E1A" stroke="rgba(255,255,255,0.05)" stroke-width="1" />
+    
+    <text x="24" y="22" class="hud-text" font-size="10" font-weight="700" fill="#64748B" letter-spacing="1">TELEMETRY:</text>
+    <text x="110" y="22" class="hud-text" font-size="10" font-weight="600" fill="#00E5FF" letter-spacing="1">LATENCY &lt; 10ms</text>
+    <text x="230" y="22" class="hud-text" font-size="10" font-weight="400" fill="#334155">•</text>
+
+    <text x="250" y="22" class="hud-text" font-size="10" font-weight="700" fill="#64748B" letter-spacing="1">FLOW CONTROL:</text>
+    <text x="360" y="22" class="hud-text" font-size="10" font-weight="600" fill="#818CF8" letter-spacing="1">LEAKY BUCKET ACK</text>
+    <text x="495" y="22" class="hud-text" font-size="10" font-weight="400" fill="#334155">•</text>
+
+    <text x="515" y="22" class="hud-text" font-size="10" font-weight="700" fill="#64748B" letter-spacing="1">AUTHENTICATION:</text>
+    <text x="635" y="22" class="hud-text" font-size="10" font-weight="600" fill="#34D399" letter-spacing="1">HMAC-SHA256 JWT</text>
+    <text x="765" y="22" class="hud-text" font-size="10" font-weight="400" fill="#334155">•</text>
+
+    <text x="785" y="22" class="hud-text" font-size="10" font-weight="700" fill="#64748B" letter-spacing="1">REMOTE MESH:</text>
+    <text x="890" y="22" class="hud-text" font-size="10" font-weight="600" fill="#F43F5E" letter-spacing="1">CLOUDFLARE / LAN</text>
+  </g>
+</svg>
