@@ -3,6 +3,7 @@ import secrets
 import hashlib
 import io
 import base64
+from pathlib import Path
 import qrcode  # type: ignore
 import jwt
 from typing import Optional, Dict, Any, List
@@ -54,14 +55,28 @@ async def generate_pairing_session() -> Dict[str, Any]:
         "hostname": settings.HOST
     }
     
+    # Check for active cloud tunnel URL
+    tunnel_file = Path(__file__).resolve().parent.parent.parent / ".tunnel_url"
+    tunnel_url = ""
+    if tunnel_file.exists():
+        try:
+            tunnel_url = tunnel_file.read_text().strip()
+        except Exception:
+            pass
+
+    if tunnel_url:
+        pair_web_url = f"{tunnel_url.rstrip('/')}/?pin={pin}"
+    else:
+        pair_web_url = f"http://{primary_ip}:{settings.PORT}/?pin={pin}&agentUrl=http://{primary_ip}:{settings.PORT}"
+
     # Generate QR Code image as base64 data URL
-    qr = qrcode.QRCode(
+    qr = qrcode.QRCode(  # type: ignore
         version=1,
-        error_correction=qrcode.constants.ERROR_CORRECT_M,
+        error_correction=qrcode.constants.ERROR_CORRECT_M,  # type: ignore
         box_size=8,
         border=2,
     )
-    qr.add_data(f"omnicontrol://pair?pin={pin}&host={primary_ip}&port={settings.PORT}")
+    qr.add_data(pair_web_url)
     qr.make(fit=True)
     img = qr.make_image(fill_color="#00E5FF", back_color="#0A0A0C")
     buf = io.BytesIO()
@@ -74,6 +89,7 @@ async def generate_pairing_session() -> Dict[str, Any]:
         "pairing_token": pairing_token,
         "expires_in_seconds": 300,
         "qr_code": qr_data_url,
+        "pair_url": pair_web_url,
         "network_interfaces": interfaces
     }
 

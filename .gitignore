@@ -58,6 +58,9 @@ data/logs/
 .env.local
 .env.development.local
 .env.test.local
+.tunnel_url
+.tunnel_log.txt
+pair.html
 .env.production.local
 *.pem
 *.key

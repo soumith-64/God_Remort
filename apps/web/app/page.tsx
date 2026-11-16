@@ -25,7 +25,41 @@ export default function Home() {
   // Activate live telemetry WebSocket stream
   useAgentSocket();
 
-  const { activeTab } = useOmniStore();
+  const { 
+    activeTab, 
+    setAgentUrl, 
+    setAuth, 
+    setConnectionStatus, 
+    addNotification, 
+    setPairingModalOpen, 
+    token 
+  } = useOmniStore();
+
+  // Support 1-tap instant pairing from QR code or shared URL (?agentUrl=...&pin=...)
+  React.useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const agentParam = params.get("agentUrl");
+    const pinParam = params.get("pin");
+    if (agentParam) {
+      setAgentUrl(agentParam);
+    }
+    if (pinParam && !token) {
+      import("@/lib/api").then(({ api }) => {
+        api.auth.verifyPairing(pinParam, "Mobile Phone").then((res) => {
+          setAuth(res.token, res.device_id);
+          setConnectionStatus("CONNECTED");
+          addNotification({
+            title: "Quick-Pair Successful",
+            message: "Connected and authenticated via instant QR link.",
+            type: "success"
+          });
+          setPairingModalOpen(false);
+          window.history.replaceState({}, document.title, window.location.pathname);
+        }).catch(() => {});
+      });
+    }
+  }, [token, setAgentUrl, setAuth, setConnectionStatus, addNotification, setPairingModalOpen]);
 
   const renderActiveView = () => {
     switch (activeTab) {
