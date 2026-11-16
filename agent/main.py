@@ -242,16 +242,16 @@ async def restart_agent_endpoint(current_device: dict = Depends(require_scope("s
     def _deferred_restart():
         time.sleep(0.6)
         python_exe = sys.executable
-        pythonw = Path(python_exe).parent / "pythonw.exe"
-        runner = str(pythonw) if pythonw.exists() else python_exe
         script = str(Path(__file__).resolve())
         root_dir = str(Path(__file__).resolve().parent.parent)
-        DETACHED_PROCESS = 0x00000008
+        creationflags = 0x00000008 | 0x00000200  # DETACHED_PROCESS | CREATE_NEW_PROCESS_GROUP
         subprocess.Popen(
-            [runner, script],
+            [python_exe, script],
             cwd=root_dir,
-            creationflags=DETACHED_PROCESS,
-            close_fds=True
+            creationflags=creationflags,
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL
         )
         os._exit(0)
 

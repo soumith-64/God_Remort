@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
     Starts a Secure Cloudflare HTTPS Tunnel for GOD REMORT Agent.
     - Saves the public tunnel URL into .tunnel_url
