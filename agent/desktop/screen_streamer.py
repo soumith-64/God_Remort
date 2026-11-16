@@ -118,7 +118,7 @@ class ScreenStreamer:
         y0 = center_y - card_h // 2
         draw.rounded_rectangle([x0, y0, x0 + card_w, y0 + card_h], radius=16, fill="#131620", outline="#252A3D", width=1)
         
-        draw.text((center_x, center_y - 35), "OMNICONTROL DESKTOP", fill="#00E5FF", anchor="mm")
+        draw.text((center_x, center_y - 35), "GOD REMORT DESKTOP", fill="#00E5FF", anchor="mm")
         draw.text((center_x, center_y), reason, fill="#E2E8F0", anchor="mm")
         draw.text((center_x, center_y + 35), "Screen will stream automatically once desktop is active.", fill="#64748B", anchor="mm")
         

@@ -16,7 +16,7 @@ export function TerminalView() {
   const { agentUrl, token, addNotification } = useOmniStore();
 
   const [outputLines, setOutputLines] = useState<string[]>([
-    "OMNICONTROL PowerShell Interactive Terminal [Version 1.0]",
+    "GOD REMORT PowerShell Interactive Terminal [Version 1.0]",
     "Connected to host workstation shell session.",
     "Type commands below or use quick action snippets.\n"
   ]);

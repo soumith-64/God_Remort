@@ -20,7 +20,7 @@ WEB_URL = "http://127.0.0.1:3000"
 
 async def run_acceptance_tests():
     print("=" * 65)
-    print("OMNICONTROL — FULL END-TO-END ACCEPTANCE VERIFICATION")
+    print("GOD REMORT — FULL END-TO-END ACCEPTANCE VERIFICATION")
     print("=" * 65)
     results = {}
 

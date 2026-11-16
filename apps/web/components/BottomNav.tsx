@@ -47,7 +47,7 @@ export function BottomNav() {
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex flex-col justify-end md:hidden animate-fade-in">
           <div className="bg-omni-surface border-t border-omni-border rounded-t-3xl p-5 shadow-2xl">
             <div className="flex items-center justify-between pb-3 border-b border-omni-border mb-4">
-              <span className="font-semibold text-sm text-white">OMNICONTROL Tools</span>
+              <span className="font-semibold text-sm text-white">GOD REMORT Tools</span>
               <button 
                 onClick={() => setShowMoreMenu(false)}
                 className="p-1 rounded-full bg-omni-card text-omni-muted hover:text-white"

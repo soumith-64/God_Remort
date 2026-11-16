@@ -39,23 +39,23 @@ logger = logging.getLogger("omnicontrol.agent")
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup
-    logger.info("Initializing OMNICONTROL Agent SQLite Database...")
+    logger.info("Initializing GOD REMORT Agent SQLite Database...")
     await init_db()
     
     # Generate initial pairing session
     pairing_info = await generate_pairing_session()
     logger.info("=" * 60)
-    logger.info("OMNICONTROL AGENT ONLINE")
+    logger.info("GOD REMORT AGENT ONLINE")
     logger.info(f"Host: {settings.HOST}:{settings.PORT}")
     logger.info(f"Active Network IPs: {[iface['ip'] for iface in pairing_info['network_interfaces']]}")
     logger.info(f"PAIRING PIN: [ {pairing_info['pin']} ] (Valid for 5 minutes)")
     logger.info("=" * 60)
     yield
     # Shutdown
-    logger.info("Shutting down OMNICONTROL Agent...")
+    logger.info("Shutting down GOD REMORT Agent...")
 
 app = FastAPI(
-    title="OMNICONTROL Agent",
+    title="GOD REMORT Agent",
     description="High-Performance Laptop Companion Agent & Remote Control Engine",
     version="1.0.0",
     lifespan=lifespan
@@ -118,7 +118,7 @@ async def health_check():
     interfaces = settings.get_network_interfaces()
     return {
         "status": "online",
-        "service": "OMNICONTROL Agent",
+        "service": "GOD REMORT Agent",
         "version": "1.0.0",
         "interfaces": interfaces,
         "has_active_pairing": get_current_pairing_pin() is not None

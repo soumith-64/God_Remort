@@ -102,11 +102,11 @@ class SystemControl:
             return {"status": "success", "action": "sleep", "message": "Entering sleep state"}
 
         elif action == "restart":
-            subprocess.Popen(["shutdown", "/r", "/t", "5", "/c", "Restart initiated from OMNICONTROL mobile"])
+            subprocess.Popen(["shutdown", "/r", "/t", "5", "/c", "Restart initiated from GOD REMORT mobile"])
             return {"status": "success", "action": "restart", "message": "Restart scheduled in 5 seconds"}
 
         elif action == "shutdown":
-            subprocess.Popen(["shutdown", "/s", "/t", "5", "/c", "Shutdown initiated from OMNICONTROL mobile"])
+            subprocess.Popen(["shutdown", "/s", "/t", "5", "/c", "Shutdown initiated from GOD REMORT mobile"])
             return {"status": "success", "action": "shutdown", "message": "Shutdown scheduled in 5 seconds"}
 
         elif action == "cancel":

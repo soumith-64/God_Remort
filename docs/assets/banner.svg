@@ -163,7 +163,7 @@
 
   <!-- Main Brand Title -->
   <g transform="translate(60, 145)" class="neon-title">
-    <text x="0" y="0" class="hud-text" font-size="62" font-weight="900" fill="url(#textGrad)" letter-spacing="2">OMNICONTROL</text>
+    <text x="0" y="0" class="hud-text" font-size="62" font-weight="900" fill="url(#textGrad)" letter-spacing="2">GOD REMORT</text>
   </g>
 
   <!-- Dynamic Tagline -->

@@ -1,8 +1,8 @@
-# Contributing to OMNICONTROL
+# Contributing to GOD REMORT
 
-Thank you for your interest in contributing to **OMNICONTROL**. 
+Thank you for your interest in contributing to **GOD REMORT**. 
 
-Before proceeding, please review our [LICENSE](LICENSE) and collaboration standards. OMNICONTROL is a proprietary, source-available platform with strict copyright and duplication controls.
+Before proceeding, please review our [LICENSE](LICENSE) and collaboration standards. GOD REMORT is a proprietary, source-available platform with strict copyright and duplication controls.
 
 ---
 
@@ -44,8 +44,8 @@ To protect user workstations, prevent state collisions, and maintain system secu
 ### Quick Setup Steps
 1. Clone your fork or branch:
    ```bash
-   git clone https://github.com/YOUR_USERNAME/omnicontrol.git
-   cd omnicontrol
+   git clone https://github.com/YOUR_USERNAME/God_Remort.git
+   cd God_Remort
    ```
 2. Set up the Python Agent virtual environment:
    ```powershell
@@ -90,5 +90,5 @@ To protect user workstations, prevent state collisions, and maintain system secu
 
 ## 4. Proprietary Terms & Anti-Duplication
 
-* All code submitted via Pull Requests becomes part of the OMNICONTROL codebase under the terms of the [OMNICONTROL Proprietary License](LICENSE).
+* All code submitted via Pull Requests becomes part of the GOD REMORT codebase under the terms of the [GOD REMORT Proprietary License](LICENSE).
 * Unauthorized copying, mirroring, distribution, or commercial exploitation of any part of this repository is strictly prohibited.

@@ -1,8 +1,8 @@
 <div align="center">
 
 <!-- Animated Vector Hero Banner -->
-<a href="#omnicontrol">
-  <img src="docs/assets/banner.svg" alt="OMNICONTROL Header Banner" width="100%" />
+<a href="#god-remort">
+  <img src="docs/assets/banner.svg" alt="GOD REMORT Header Banner" width="100%" />
 </a>
 
 <br/><br/>
@@ -29,7 +29,7 @@
   <a href="#-quick-start"><b>🚀 Quick Start</b></a> •
   <a href="#-core-capabilities"><b>⚡ Capabilities</b></a> •
   <a href="#-animated-architecture"><b>📐 Architecture</b></a> •
-  <a href="#-why-omnicontrol"><b>📊 Comparison</b></a> •
+  <a href="#-why-god-remort"><b>📊 Comparison</b></a> •
   <a href="#-deploying-to-vercel"><b>🌐 Vercel Deploy</b></a> •
   <a href="#-collaborating-in-isolated-environments"><b>🤝 Collaboration</b></a> •
   <a href="#-copyright--duplication-controls"><b>🛡️ License &amp; Security</b></a>
@@ -43,9 +43,9 @@
 
 ## 🌟 Overview
 
-**OMNICONTROL** turns your smartphone or tablet into a wireless, encrypted, low-latency command centre for your personal Windows workstation.
+**GOD REMORT** turns your smartphone or tablet into a wireless, encrypted, low-latency command centre for your personal Windows workstation.
 
-Designed with an ultra-sleek, dark-mode visual aesthetic inspired by **Linear**, **Raycast**, and **macOS**, OMNICONTROL pairs native Windows system management with touch-optimized remote desktop streaming. Whether you are across the room, giving a presentation, or travelling, OMNICONTROL delivers total workstation control directly from your mobile browser.
+Designed with an ultra-sleek, dark-mode visual aesthetic inspired by **Linear**, **Raycast**, and **macOS**, GOD REMORT pairs native Windows system management with touch-optimized remote desktop streaming. Whether you are across the room, giving a presentation, or travelling, GOD REMORT delivers total workstation control directly from your mobile browser.
 
 ---
 
@@ -135,7 +135,7 @@ Designed with an ultra-sleek, dark-mode visual aesthetic inspired by **Linear**,
 ## 📐 Animated Architecture
 
 <div align="center">
-  <img src="docs/assets/architecture.svg" alt="Animated OMNICONTROL Architecture" width="100%" />
+  <img src="docs/assets/architecture.svg" alt="Animated GOD REMORT Architecture" width="100%" />
 </div>
 
 ### Low-Latency Flow Control Protocol
@@ -171,9 +171,9 @@ sequenceDiagram
 </div>
 <br/>
 
-## 📊 Why OMNICONTROL?
+## 📊 Why GOD REMORT?
 
-| Feature | OMNICONTROL | TeamViewer / AnyDesk | Windows Remote Desktop (RDP) |
+| Feature | GOD REMORT | TeamViewer / AnyDesk | Windows Remote Desktop (RDP) |
 | :--- | :---: | :---: | :---: |
 | **Mobile Client Installation** | 🚫 **None** (Instant Web PWA) | ⚠️ Required App (~150MB) | ⚠️ Required App Store Client |
 | **Touchscreen Virtual Mouse** | ✅ **Nudge D-Pad + Docked Trackpad** | ❌ Awkward click emulation | ❌ Clunky pointer emulation |
@@ -196,7 +196,7 @@ sequenceDiagram
 * **Python:** 3.12+ (in `agent/.venv`)
 * **Node.js:** v20+ and npm
 
-### 2. Launch OMNICONTROL
+### 2. Launch GOD REMORT
 Run the all-in-one launcher script in PowerShell:
 ```powershell
 .\scripts\start-all.ps1
@@ -224,7 +224,7 @@ npm --prefix apps/web run dev
 
 ## 🌐 Deploying to Vercel
 
-The OMNICONTROL web frontend is pre-configured for **zero-config Vercel deployment** with global edge CDN delivery.
+The GOD REMORT web frontend is pre-configured for **zero-config Vercel deployment** with global edge CDN delivery.
 
 ### 1-Click Deployment
 1. Import your GitHub repository into [Vercel](https://vercel.com/new).
@@ -272,7 +272,7 @@ To ensure security, prevent workstation collisions, and safeguard developer priv
 ```
 
 1. **Local Sandbox Isolation:** Each collaborator runs their own agent runtime on `http://127.0.0.1:8000`. The local SQLite database (`data/omnicontrol.db`) is strictly `.gitignored` so credentials and device pairings never leak.
-2. **Ephemeral Vercel Previews:** Every Pull Request automatically generates a unique Vercel preview URL (`https://omnicontrol-git-<branch>.vercel.app`) for isolated frontend review.
+2. **Ephemeral Vercel Previews:** Every Pull Request automatically generates a unique Vercel preview URL (`https://god-remort-git-<branch>.vercel.app`) for isolated frontend review.
 3. **Automated CI Enforcement:** GitHub Actions automatically tests every PR against the unit test suite and validates the Next.js production build before merging.
 
 > Review the complete guidelines in [CONTRIBUTING.md](CONTRIBUTING.md).
@@ -285,7 +285,7 @@ To ensure security, prevent workstation collisions, and safeguard developer priv
 
 ## 🧪 Acceptance Testing
 
-OMNICONTROL includes a 20-point automated end-to-end acceptance harness verifying every subsystem:
+GOD REMORT includes a 20-point automated end-to-end acceptance harness verifying every subsystem:
 
 ```powershell
 # Run the complete 20/20 acceptance suite
@@ -298,7 +298,7 @@ OMNICONTROL includes a 20-point automated end-to-end acceptance harness verifyin
 
 ```text
 =================================================================
-OMNICONTROL — FULL END-TO-END ACCEPTANCE VERIFICATION
+GOD REMORT — FULL END-TO-END ACCEPTANCE VERIFICATION
 =================================================================
 [PASSED] TEST 1 (Secure Pairing & Connection): PASSED
 [PASSED] TEST 2 (Real Hardware & Battery Telemetry): PASSED (CPU: 5.3%, RAM: 21.9GB, Battery: 95%)
@@ -333,20 +333,20 @@ ALL ACCEPTANCE TESTS PASSED SUCCESSFULLY (20/20)
 
 ## 🛡️ Copyright & Duplication Controls
 
-**Copyright &copy; 2026 OMNICONTROL. All Rights Reserved.**
+**Copyright &copy; 2026 GOD REMORT. All Rights Reserved.**
 
 This software, its source code, architecture, and associated documentation are proprietary and confidential.
 
 * **Strict Prohibition of Duplication:** No part of this codebase may be duplicated, reproduced, decompiled, reverse engineered, republished, or redistributed without express written permission.
 * **No Downloading for Commercial or Derivative Clones:** Scraping or downloading this repository for the purpose of creating public mirrors, unauthorized commercial SaaS products, or AI dataset training is strictly prohibited.
-* **Collaboration Exception:** Authorized contributors may fork or clone this repository solely to develop and submit improvements back to the upstream project under the terms of the [OMNICONTROL Proprietary License](LICENSE).
+* **Collaboration Exception:** Authorized contributors may fork or clone this repository solely to develop and submit improvements back to the upstream project under the terms of the [GOD REMORT Proprietary License](LICENSE).
 
 <br/>
 
 ---
 
 <div align="center">
-  <b>OMNICONTROL PRO</b> • Crafted with Precision for Windows 11 Workstations
+  <b>GOD REMORT PRO</b> • Crafted with Precision for Windows 11 Workstations
   <br/>
   <sub>Protected by International Copyright and Intellectual Property Laws.</sub>
 </div>

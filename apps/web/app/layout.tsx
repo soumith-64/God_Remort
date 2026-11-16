@@ -2,7 +2,7 @@ import "./globals.css";
 import type { Metadata, Viewport } from "next";
 
 export const metadata: Metadata = {
-  title: "OMNICONTROL — Complete Laptop Remote Control Platform",
+  title: "GOD REMORT — Complete Laptop Remote Control Platform",
   description: "Transform your smartphone or tablet into a wireless control centre for your laptop: Remote Desktop, Application Management, Files, PowerShell Terminal, and Power.",
   manifest: "/manifest.json",
   icons: {
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     },
   },
   other: {
-    copyright: "Copyright (c) 2026 OMNICONTROL. All Rights Reserved. Proprietary & Confidential.",
+    copyright: "Copyright (c) 2026 GOD REMORT. All Rights Reserved. Proprietary & Confidential.",
   },
 };
 

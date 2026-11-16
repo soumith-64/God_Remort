@@ -64,7 +64,7 @@ export function Header() {
               <Radio className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white animate-pulse-slow" />
             </div>
             <div className="flex items-center space-x-1">
-              <span className="font-bold text-xs sm:text-sm tracking-wider text-white hidden xs:inline">OMNICONTROL</span>
+              <span className="font-bold text-xs sm:text-sm tracking-wider text-white hidden xs:inline">GOD REMORT</span>
               <span className="text-[9px] font-mono px-1 py-0.2 rounded bg-cyan-950 text-omni-cyan border border-cyan-800/50">
                 PRO
               </span>
