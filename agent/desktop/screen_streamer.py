@@ -145,28 +145,34 @@ class ScreenStreamer:
             cy = int(raw_y * self.scale)
 
             if 0 <= cx < target_w and 0 <= cy < target_h:
-                # Use prominent scale so cursor is clearly visible on mobile screens
-                c_scale = max(1.2, 1.8 * self.scale)
+                # Prominent scale for mobile phone screens
+                c_scale = max(1.5, 2.2 * self.scale)
 
-                # 1. Outer high-contrast pointer polygon (arrow)
+                is_4ch = len(frame.shape) == 3 and frame.shape[2] == 4
+                black = (0, 0, 0, 255) if is_4ch else (0, 0, 0)
+                white = (255, 255, 255, 255) if is_4ch else (255, 255, 255)
+                cyan = (255, 230, 0, 255) if is_4ch else (255, 230, 0)
+                amber = (0, 165, 255, 255) if is_4ch else (0, 165, 255)
+
+                # 1. High-contrast arrow pointer polygon
                 pts = np.array([
                     [cx, cy],
-                    [cx, min(target_h - 1, cy + int(24 * c_scale))],
-                    [min(target_w - 1, cx + int(7 * c_scale)), min(target_h - 1, cy + int(18 * c_scale))],
-                    [min(target_w - 1, cx + int(12 * c_scale)), min(target_h - 1, cy + int(28 * c_scale))],
-                    [min(target_w - 1, cx + int(16 * c_scale)), min(target_h - 1, cy + int(26 * c_scale))],
-                    [min(target_w - 1, cx + int(11 * c_scale)), min(target_h - 1, cy + int(16 * c_scale))],
-                    [min(target_w - 1, cx + int(18 * c_scale)), min(target_h - 1, cy + int(16 * c_scale))],
+                    [cx, min(target_h - 1, cy + int(26 * c_scale))],
+                    [min(target_w - 1, cx + int(8 * c_scale)), min(target_h - 1, cy + int(20 * c_scale))],
+                    [min(target_w - 1, cx + int(14 * c_scale)), min(target_h - 1, cy + int(30 * c_scale))],
+                    [min(target_w - 1, cx + int(18 * c_scale)), min(target_h - 1, cy + int(28 * c_scale))],
+                    [min(target_w - 1, cx + int(13 * c_scale)), min(target_h - 1, cy + int(17 * c_scale))],
+                    [min(target_w - 1, cx + int(20 * c_scale)), min(target_h - 1, cy + int(17 * c_scale))],
                 ], dtype=np.int32)
 
-                # Thick black outer contour (guarantees visibility on white documents / web pages)
-                cv2.polylines(frame, [pts], isClosed=True, color=(0, 0, 0), thickness=max(2, int(4 * c_scale)), lineType=cv2.LINE_AA)
-                # Crisp bright white fill (guarantees visibility on dark backgrounds / terminal / IDE)
-                cv2.fillPoly(frame, [pts], color=(255, 255, 255), lineType=cv2.LINE_AA)
+                # Heavy outer black contour (guarantees visibility on white documents / bright backgrounds)
+                cv2.polylines(frame, [pts], isClosed=True, color=black, thickness=max(3, int(5 * c_scale)), lineType=cv2.LINE_AA)
+                # Crisp bright white fill (guarantees visibility on dark IDE / terminals)
+                cv2.fillPoly(frame, [pts], color=white, lineType=cv2.LINE_AA)
 
                 # 2. Glowing Cyan pinpoint reticle at the exact apex (cx, cy)
-                cv2.circle(frame, (cx, cy), max(3, int(4 * c_scale)), (255, 230, 0), -1)  # BGR Cyan
-                cv2.circle(frame, (cx, cy), max(4, int(5 * c_scale)), (0, 0, 0), 1)
+                cv2.circle(frame, (cx, cy), max(3, int(4 * c_scale)), cyan, -1)
+                cv2.circle(frame, (cx, cy), max(5, int(6 * c_scale)), black, 1)
         except Exception:
             pass
 
@@ -185,16 +191,15 @@ class ScreenStreamer:
             # Ultra-fast SIMD resize (INTER_NEAREST executes in <0.8ms vs 6ms)
             resized = cv2.resize(raw_array, (target_w, target_h), interpolation=cv2.INTER_NEAREST)
             
-            # Extract BGR frame and burn high-contrast hardware cursor onto image
-            bgr_frame = resized[:, :, :3]
-            self._draw_cursor_on_frame(bgr_frame, target_w, target_h)
+            # Burn high-contrast hardware cursor directly onto contiguous 4-channel image
+            self._draw_cursor_on_frame(resized, target_w, target_h)
 
-            # Fast OpenCV hardware JPEG encode
+            # Fast OpenCV hardware JPEG encode directly from contiguous image
             encode_params = [
                 cv2.IMWRITE_JPEG_QUALITY, self.quality,
                 cv2.IMWRITE_JPEG_OPTIMIZE, 0
             ]
-            success, enc_buf = cv2.imencode(".jpg", bgr_frame, encode_params)
+            success, enc_buf = cv2.imencode(".jpg", resized, encode_params)
             if success:
                 return enc_buf.tobytes()
             return self._generate_standby_frame("Encoding failed")
