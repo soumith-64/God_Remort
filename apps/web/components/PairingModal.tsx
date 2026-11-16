@@ -148,23 +148,54 @@ export function PairingModal() {
                 <label className="text-xs font-medium text-omni-muted">
                   Laptop Agent Host URL
                 </label>
+                {agentUrl && (
+                  <button
+                    type="button"
+                    onClick={() => setAgentUrl("")}
+                    className="text-[11px] text-rose-400 hover:underline"
+                  >
+                    Clear URL
+                  </button>
+                )}
+              </div>
+              <div className="relative">
+                <input
+                  type="text"
+                  value={agentUrl}
+                  onChange={(e) => setAgentUrl(e.target.value)}
+                  placeholder="https://value-charges-opposite-imagination.trycloudflare.com"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-omni-card border border-omni-border text-white text-xs font-mono focus:outline-none focus:border-omni-cyan pr-8"
+                />
+                {agentUrl && (
+                  <button
+                    type="button"
+                    onClick={() => setAgentUrl("")}
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-omni-muted hover:text-white"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+
+              {/* Quick 1-Tap Presets */}
+              <div className="flex flex-wrap gap-1.5 mt-2">
                 <button
                   type="button"
-                  onClick={() => setTab("network")}
-                  className="text-[11px] text-omni-cyan hover:underline"
+                  onClick={() => setAgentUrl("https://value-charges-opposite-imagination.trycloudflare.com")}
+                  className="px-2.5 py-1 rounded-lg bg-cyan-950/80 border border-cyan-500/40 text-omni-cyan text-[11px] font-medium hover:bg-cyan-900/60 active:scale-95 transition-all"
                 >
-                  View Network IPs
+                  ⚡ Use Live Cloudflare Tunnel
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setAgentUrl("http://192.168.0.110:8000")}
+                  className="px-2.5 py-1 rounded-lg bg-omni-card border border-omni-border text-omni-muted text-[11px] hover:text-white active:scale-95 transition-all"
+                >
+                  Wi-Fi IP
                 </button>
               </div>
-              <input
-                type="text"
-                value={agentUrl}
-                onChange={(e) => setAgentUrl(e.target.value)}
-                placeholder="http://192.168.0.110:8000"
-                className="w-full px-3.5 py-2.5 rounded-xl bg-omni-card border border-omni-border text-white text-xs font-mono focus:outline-none focus:border-omni-cyan"
-              />
-              <p className="text-[11px] text-omni-muted mt-1">
-                Enter your laptop Wi-Fi IP (e.g. http://192.168.0.110:8000) or Cloudflare tunnel.
+              <p className="text-[11px] text-omni-muted mt-1.5">
+                Tap "Use Live Cloudflare Tunnel" for instant mobile connection with zero network blocks.
               </p>
             </div>
 
@@ -247,19 +278,49 @@ export function PairingModal() {
         {tab === "network" && (
           <div className="space-y-4">
             <div>
-              <label className="block text-xs font-medium text-omni-muted mb-1.5">
-                Laptop Agent Base URL
-              </label>
-              <input
-                type="text"
-                value={agentUrl}
-                onChange={(e) => setAgentUrl(e.target.value)}
-                placeholder="http://192.168.1.7:8000"
-                className="w-full px-3.5 py-2.5 rounded-xl bg-omni-card border border-omni-border text-white text-xs font-mono focus:outline-none focus:border-omni-cyan"
-              />
-              <p className="text-[11px] text-omni-muted mt-1">
-                When accessing from a phone on the same Wi-Fi, enter your laptop's local Wi-Fi IP address.
-              </p>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="text-xs font-medium text-omni-muted">
+                  Laptop Agent Base URL
+                </label>
+                {agentUrl && (
+                  <button
+                    type="button"
+                    onClick={() => setAgentUrl("")}
+                    className="text-[11px] text-rose-400 hover:underline"
+                  >
+                    Clear URL
+                  </button>
+                )}
+              </div>
+              <div className="relative">
+                <input
+                  type="text"
+                  value={agentUrl}
+                  onChange={(e) => setAgentUrl(e.target.value)}
+                  placeholder="https://value-charges-opposite-imagination.trycloudflare.com"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-omni-card border border-omni-border text-white text-xs font-mono focus:outline-none focus:border-omni-cyan pr-8"
+                />
+                {agentUrl && (
+                  <button
+                    type="button"
+                    onClick={() => setAgentUrl("")}
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-omni-muted hover:text-white"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+
+              {/* Quick Preset Buttons */}
+              <div className="flex flex-wrap gap-1.5 mt-2">
+                <button
+                  type="button"
+                  onClick={() => setAgentUrl("https://value-charges-opposite-imagination.trycloudflare.com")}
+                  className="px-2.5 py-1 rounded-lg bg-cyan-950/80 border border-cyan-500/40 text-omni-cyan text-[11px] font-medium hover:bg-cyan-900/60 active:scale-95 transition-all"
+                >
+                  ⚡ Use Live Cloudflare Tunnel
+                </button>
+              </div>
             </div>
 
             {interfaces.length > 0 && (

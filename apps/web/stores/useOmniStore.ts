@@ -134,9 +134,16 @@ interface OmniStore {
 
 const getInitialAgentUrl = () => {
   if (typeof window === "undefined") return process.env.NEXT_PUBLIC_DEFAULT_AGENT_URL || "http://localhost:8000";
-  const saved = localStorage.getItem("omni_agent_url");
-  if (saved) return saved;
-  return process.env.NEXT_PUBLIC_DEFAULT_AGENT_URL || window.location.origin;
+  let saved = localStorage.getItem("omni_agent_url");
+  if (saved) {
+    // Repair corrupted duplicate protocols from previous input bugs
+    if (saved.includes("http://http:") || saved.includes("http://http://") || saved.includes("https://http:")) {
+      saved = saved.replace(/^(https?:\/\/)+(https?:?\/*)?/i, (m) => m.toLowerCase().includes("https") ? "https://" : "http://");
+      localStorage.setItem("omni_agent_url", saved);
+    }
+    return saved;
+  }
+  return process.env.NEXT_PUBLIC_DEFAULT_AGENT_URL || (window.location.hostname.endsWith("vercel.app") ? "" : window.location.origin);
 };
 
 const getInitialSystems = (): SystemProfile[] => {
@@ -220,9 +227,10 @@ export const useOmniStore = create<OmniStore>((set, get) => ({
   },
 
   setAgentUrl: (url: string) => {
-    let clean = url.trim().replace(/\/$/, "");
-    if (!clean.startsWith("http://") && !clean.startsWith("https://")) {
-      clean = "http://" + clean;
+    let clean = url.trim();
+    // Repair corrupted duplicate protocols like http://http: or http://http://
+    if (clean.includes("http://http:") || clean.includes("http://http://") || clean.includes("https://http:")) {
+      clean = clean.replace(/^(https?:\/\/)+(https?:?\/*)?/i, (m) => m.toLowerCase().includes("https") ? "https://" : "http://");
     }
     if (typeof window !== "undefined") {
       localStorage.setItem("omni_agent_url", clean);

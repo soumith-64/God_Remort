@@ -6,7 +6,16 @@ export async function agentRequest<T>(
 ): Promise<T> {
   const { agentUrl, token, setConnectionStatus, setPairingModalOpen } = useOmniStore.getState();
   
-  let base = agentUrl ? agentUrl.replace(/\/$/, "") : "";
+  let base = agentUrl ? agentUrl.trim().replace(/\/$/, "") : "";
+  // Repair corrupted duplicate protocol if present
+  if (base.includes("http://http:") || base.includes("http://http://") || base.includes("https://http:")) {
+    base = base.replace(/^(https?:\/\/)+(https?:?\/*)?/i, (m) => m.toLowerCase().includes("https") ? "https://" : "http://");
+  }
+  if (base && !base.startsWith("http://") && !base.startsWith("https://")) {
+    base = (base.includes("trycloudflare.com") || base.includes("ngrok") || base.includes("loca.lt"))
+      ? "https://" + base
+      : "http://" + base;
+  }
   if (typeof window !== "undefined") {
     const isVercel = window.location.hostname.endsWith("vercel.app");
     if (!isVercel && window.location.protocol === "https:" && (!base || base.startsWith("http://localhost") || base.startsWith("http://127.0.0.1"))) {

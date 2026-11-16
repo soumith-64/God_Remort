@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
     Starts a Cloudflare Tunnel for GOD REMORT Agent.
     Provides instant secure public HTTPS access from phone (5G/Wi-Fi) with no port forwarding or firewall blocks.
