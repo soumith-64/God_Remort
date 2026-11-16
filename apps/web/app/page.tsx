@@ -3,6 +3,7 @@
 import React from "react";
 import { useOmniStore } from "@/stores/useOmniStore";
 import { useAgentSocket } from "@/hooks/useAgentSocket";
+import { AuthGate } from "@/components/AuthGate";
 import { Header } from "@/components/Header";
 import { Sidebar } from "@/components/Sidebar";
 import { BottomNav } from "@/components/BottomNav";
@@ -34,6 +35,12 @@ export default function Home() {
     setPairingModalOpen, 
     token 
   } = useOmniStore();
+
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Support 1-tap instant pairing from QR code or shared URL (?agentUrl=...&pin=...)
   React.useEffect(() => {
@@ -97,6 +104,25 @@ export default function Home() {
         return <DashboardView />;
     }
   };
+
+  // Prevent SSR hydration flicker
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-omni-dark flex items-center justify-center">
+        <div className="w-8 h-8 rounded-full border-2 border-cyan-500 border-t-transparent animate-spin" />
+      </div>
+    );
+  }
+
+  // Strict Authentication Gate: Without valid key/token, absolutely no access into workstation
+  if (!token) {
+    return (
+      <div className="flex flex-col min-h-screen bg-omni-dark text-foreground">
+        <ToastContainer />
+        <AuthGate />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col min-h-screen bg-omni-dark text-foreground">

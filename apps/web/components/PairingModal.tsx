@@ -110,13 +110,15 @@ export function PairingModal() {
   return (
     <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 animate-fade-in">
       <div className="w-full max-w-md max-h-[92dvh] overflow-y-auto bg-omni-surface border border-omni-border rounded-3xl p-5 sm:p-6 shadow-2xl relative">
-        {/* Close Button */}
-        <button
-          onClick={() => setPairingModalOpen(false)}
-          className="absolute top-4 sm:top-5 right-4 sm:right-5 p-1.5 rounded-full bg-omni-card text-omni-muted hover:text-white active:scale-95 transition-transform"
-        >
-          <X className="w-5 h-5" />
-        </button>
+        {/* Close Button - only dismissable when already authenticated */}
+        {useOmniStore.getState().token && (
+          <button
+            onClick={() => setPairingModalOpen(false)}
+            className="absolute top-4 sm:top-5 right-4 sm:right-5 p-1.5 rounded-full bg-omni-card text-omni-muted hover:text-white active:scale-95 transition-transform"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        )}
 
         {/* Modal Header */}
         <div className="flex items-center space-x-3 mb-5">
@@ -165,19 +167,20 @@ export function PairingModal() {
           <form onSubmit={handlePair} className="space-y-4">
             <div>
               <label className="block text-xs font-semibold text-omni-cyan uppercase tracking-wider mb-2 text-center">
-                Enter 6-Digit System ID
+                Enter Master PIN / Key
               </label>
               <input
-                type="text"
+                type="password"
                 maxLength={6}
+                inputMode="numeric"
                 value={pin}
                 onChange={(e) => setPin(e.target.value.replace(/\D/g, ""))}
-                placeholder="101228"
+                placeholder="••••••"
                 autoFocus
                 className="w-full text-center tracking-widest font-mono text-3xl py-3.5 rounded-2xl bg-omni-card border-2 border-cyan-500/40 text-omni-cyan focus:outline-none focus:border-omni-cyan shadow-lg shadow-cyan-500/10"
               />
               <p className="text-[11px] text-omni-muted mt-2 text-center">
-                Enter your Master Number (e.g. <span className="text-white font-mono font-bold">101228</span>) to connect from any phone.
+                Enter your private 6-digit Master PIN to authenticate and connect.
               </p>
             </div>
 
@@ -228,7 +231,7 @@ export function PairingModal() {
                     type="text"
                     value={agentUrl}
                     onChange={(e) => setAgentUrl(e.target.value)}
-                    placeholder="https://...trycloudflare.com"
+                    placeholder="https://your-tunnel.trycloudflare.com"
                     className="w-full px-3 py-2 rounded-xl bg-omni-card border border-omni-border text-white text-xs font-mono pr-7"
                   />
                   {agentUrl && (
@@ -240,22 +243,6 @@ export function PairingModal() {
                       <X className="w-3.5 h-3.5" />
                     </button>
                   )}
-                </div>
-                <div className="flex gap-1.5 pt-1">
-                  <button
-                    type="button"
-                    onClick={() => setAgentUrl("https://value-charges-opposite-imagination.trycloudflare.com")}
-                    className="px-2 py-1 rounded-lg bg-cyan-950/70 border border-cyan-500/30 text-omni-cyan text-[10px]"
-                  >
-                    Live Tunnel
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setAgentUrl("http://192.168.0.110:8000")}
-                    className="px-2 py-1 rounded-lg bg-omni-card border border-omni-border text-omni-muted text-[10px]"
-                  >
-                    Local Wi-Fi
-                  </button>
                 </div>
               </div>
             )}
@@ -313,7 +300,7 @@ export function PairingModal() {
                   type="text"
                   value={agentUrl}
                   onChange={(e) => setAgentUrl(e.target.value)}
-                  placeholder="https://value-charges-opposite-imagination.trycloudflare.com"
+                  placeholder="https://your-tunnel.trycloudflare.com or http://192.168.1.100:8000"
                   className="w-full px-3.5 py-2.5 rounded-xl bg-omni-card border border-omni-border text-white text-xs font-mono focus:outline-none focus:border-omni-cyan pr-8"
                 />
                 {agentUrl && (
@@ -325,17 +312,6 @@ export function PairingModal() {
                     <X className="w-4 h-4" />
                   </button>
                 )}
-              </div>
-
-              {/* Quick Preset Buttons */}
-              <div className="flex flex-wrap gap-1.5 mt-2">
-                <button
-                  type="button"
-                  onClick={() => setAgentUrl("https://value-charges-opposite-imagination.trycloudflare.com")}
-                  className="px-2.5 py-1 rounded-lg bg-cyan-950/80 border border-cyan-500/40 text-omni-cyan text-[11px] font-medium hover:bg-cyan-900/60 active:scale-95 transition-all"
-                >
-                  ⚡ Use Live Cloudflare Tunnel
-                </button>
               </div>
             </div>
 

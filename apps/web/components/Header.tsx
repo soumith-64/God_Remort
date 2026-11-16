@@ -15,7 +15,8 @@ import {
   Server,
   Trash2,
   Check,
-  Mic
+  Mic,
+  Lock
 } from "lucide-react";
 
 export function Header() {
@@ -30,7 +31,8 @@ export function Header() {
     activeSystemId,
     switchSystem,
     addSystem,
-    removeSystem
+    removeSystem,
+    setAuth
   } = useOmniStore();
 
   const [showSystemMenu, setShowSystemMenu] = useState(false);
@@ -212,6 +214,17 @@ export function Header() {
             title="Settings"
           >
             <Settings className="w-4 h-4" />
+          </button>
+
+          {/* Lock Workstation Button */}
+          <button
+            onClick={() => {
+              setAuth(null, null);
+            }}
+            className="p-1.5 sm:p-2 rounded-lg bg-rose-950/40 hover:bg-rose-900/60 active:scale-95 border border-rose-500/30 text-rose-400 hover:text-rose-300 transition-all"
+            title="Lock Workstation (Disconnect)"
+          >
+            <Lock className="w-4 h-4" />
           </button>
         </div>
       </header>

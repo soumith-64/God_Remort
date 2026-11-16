@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Starts a Secure Cloudflare HTTPS Tunnel for GOD REMORT Agent.
     - Saves the public tunnel URL into .tunnel_url
@@ -47,8 +47,8 @@ if ($tunnelUrl) {
     Write-Host "TUNNEL READY: $tunnelUrl" -ForegroundColor Green
     Write-Host "==========================================================" -ForegroundColor Green
 
-    # Read current PIN
-    $envPin = "101228"
+    # Read current PIN from environment
+    $envPin = if ($env:GOD_REMORT_PIN) { $env:GOD_REMORT_PIN } else { "" }
     if (Test-Path "$Root\.env") {
         $envContent = Get-Content "$Root\.env" -Raw
         if ($envContent -match 'GOD_REMORT_PIN=([0-9]+)') {
