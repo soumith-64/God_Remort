@@ -3,7 +3,7 @@ import secrets
 import hashlib
 import io
 import base64
-import qrcode
+import qrcode  # type: ignore
 import jwt
 from typing import Optional, Dict, Any, List
 from fastapi import HTTPException, Security, Depends, status, Request

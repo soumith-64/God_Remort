@@ -9,3 +9,5 @@ search-path = [
 missing-import = false
 missing-attribute = false
 unsupported-operation = false
+untyped-import = false
+unbound-name = false

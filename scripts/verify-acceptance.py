@@ -101,6 +101,7 @@ async def run_acceptance_tests():
         results["TEST 5 (Keyboard Text Typing Protocol)"] = f"FAILED: {e}"
 
     # TEST 6: Launch VS Code from phone
+    scs = []
     try:
         shortcuts_res = await client.get("/api/v1/apps/shortcuts", headers=headers)
         assert shortcuts_res.status_code == 200
