@@ -46,13 +46,18 @@ async def lifespan(app: FastAPI):
     logger.info("Initializing GOD REMORT Agent SQLite Database...")
     await init_db()
     
+    # Reset any lockout
+    from agent.security.auth import _failed_attempts, _lockouts
+    _failed_attempts.clear()
+    _lockouts.clear()
+    
     # Generate initial pairing session
     pairing_info = await generate_pairing_session()
     logger.info("=" * 60)
     logger.info("GOD REMORT AGENT ONLINE")
     logger.info(f"Host: {settings.HOST}:{settings.PORT}")
     logger.info(f"Active Network IPs: {[iface['ip'] for iface in pairing_info['network_interfaces']]}")
-    logger.info(f"PAIRING PIN: [ {pairing_info['pin']} ] (Valid for 5 minutes)")
+    logger.info(f"PAIRING PIN: [ {pairing_info['pin']} ]")
     logger.info("=" * 60)
     yield
     # Shutdown
@@ -67,7 +72,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Permits local network, Tailscale mesh, and custom domains
+    allow_origin_regex=".*",  # Permits local network, Vercel apps, Cloudflare tunnels, and localhost with credentials
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

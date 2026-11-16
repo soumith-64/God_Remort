@@ -144,6 +144,31 @@ export function PairingModal() {
         {tab === "pin" && (
           <form onSubmit={handlePair} className="space-y-4">
             <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="text-xs font-medium text-omni-muted">
+                  Laptop Agent Host URL
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setTab("network")}
+                  className="text-[11px] text-omni-cyan hover:underline"
+                >
+                  View Network IPs
+                </button>
+              </div>
+              <input
+                type="text"
+                value={agentUrl}
+                onChange={(e) => setAgentUrl(e.target.value)}
+                placeholder="http://192.168.0.110:8000"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-omni-card border border-omni-border text-white text-xs font-mono focus:outline-none focus:border-omni-cyan"
+              />
+              <p className="text-[11px] text-omni-muted mt-1">
+                Enter your laptop Wi-Fi IP (e.g. http://192.168.0.110:8000) or Cloudflare tunnel.
+              </p>
+            </div>
+
+            <div>
               <label className="block text-xs font-medium text-omni-muted mb-1.5">
                 Device Name
               </label>
@@ -165,11 +190,11 @@ export function PairingModal() {
                 maxLength={6}
                 value={pin}
                 onChange={(e) => setPin(e.target.value.replace(/\D/g, ""))}
-                placeholder="000000"
+                placeholder="101228"
                 className="w-full text-center tracking-widest font-mono text-2xl py-3 rounded-xl bg-omni-card border border-omni-border text-omni-cyan focus:outline-none focus:border-omni-cyan"
               />
               <p className="text-[11px] text-omni-muted mt-1 text-center">
-                Check the laptop console or QR tab for the current PIN.
+                Enter master PIN 101228 or current console PIN.
               </p>
             </div>
 

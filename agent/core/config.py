@@ -3,12 +3,18 @@ import socket
 import psutil
 from pathlib import Path
 from typing import List, Dict
+from dotenv import load_dotenv
+
+# Load local .env configuration if present
+_env_path = Path(__file__).resolve().parent.parent.parent / ".env"
+if _env_path.exists():
+    load_dotenv(dotenv_path=_env_path, override=True)
 
 class Settings:
-    HOST: str = os.getenv("OMNICONTROL_HOST", "0.0.0.0")
-    PORT: int = int(os.getenv("OMNICONTROL_PORT", "8000"))
-    SECRET_KEY: str = os.getenv("OMNICONTROL_SECRET_KEY", "omnicontrol-secure-secret-key-3.12-production")
-    DATA_DIR: Path = Path(os.getenv("OMNICONTROL_DATA_DIR", "./data")).resolve()
+    HOST: str = os.getenv("GOD_REMORT_HOST", os.getenv("OMNICONTROL_HOST", "0.0.0.0"))
+    PORT: int = int(os.getenv("GOD_REMORT_PORT", os.getenv("OMNICONTROL_PORT", "8000")))
+    SECRET_KEY: str = os.getenv("GOD_REMORT_SECRET_KEY", os.getenv("OMNICONTROL_SECRET_KEY", "god-remort-secure-secret-key-3.12-production"))
+    DATA_DIR: Path = Path(os.getenv("GOD_REMORT_DATA_DIR", os.getenv("OMNICONTROL_DATA_DIR", "./data"))).resolve()
     
     ALLOWED_ORIGINS: List[str] = [
         "http://localhost:3000",

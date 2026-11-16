@@ -8,14 +8,19 @@ export async function agentRequest<T>(
   
   let base = agentUrl ? agentUrl.replace(/\/$/, "") : "";
   if (typeof window !== "undefined") {
-    // If running on HTTPS (like ngrok) and agentUrl is insecure localhost, use current HTTPS origin to prevent mixed-content blocks
-    if (window.location.protocol === "https:" && (!base || base.startsWith("http://localhost") || base.startsWith("http://127.0.0.1"))) {
+    const isVercel = window.location.hostname.endsWith("vercel.app");
+    if (!isVercel && window.location.protocol === "https:" && (!base || base.startsWith("http://localhost") || base.startsWith("http://127.0.0.1"))) {
       base = window.location.origin;
     } else if (!base) {
-      base = window.location.origin;
+      base = isVercel ? "" : window.location.origin;
     }
   } else if (!base) {
     base = "http://localhost:8000";
+  }
+
+  // If on Vercel and base points to Vercel itself, Vercel has no backend agent
+  if (typeof window !== "undefined" && window.location.hostname.endsWith("vercel.app") && (!base || base === window.location.origin)) {
+    throw new Error("Laptop Agent URL required. Please enter your laptop's local Wi-Fi IP (e.g. http://192.168.0.110:8000) or Cloudflare Tunnel URL in Host IP.");
   }
 
   const url = `${base}${endpoint.startsWith("/") ? endpoint : "/" + endpoint}`;
@@ -44,7 +49,8 @@ export async function agentRequest<T>(
   try {
     const res = await fetch(url, { ...options, headers });
 
-    if (res.status === 401) {
+    // Only trigger modal for protected routes, not pairing verify attempts
+    if (res.status === 401 && !endpoint.includes("/auth/")) {
       setConnectionStatus("AUTH_REQUIRED");
       setPairingModalOpen(true);
       throw new Error("Authentication required. Please enter your PIN.");
@@ -63,7 +69,7 @@ export async function agentRequest<T>(
   } catch (err: any) {
     if (err.name === "TypeError" && err.message.includes("fetch")) {
       setConnectionStatus("OFFLINE");
-      throw new Error(`Cannot reach OMNICONTROL Agent at ${agentUrl}. Is it running?`);
+      throw new Error(`Cannot reach GOD REMORT Agent at ${base || agentUrl || 'localhost:8000'}. Is the agent running on your laptop?`);
     }
     throw err;
   }
