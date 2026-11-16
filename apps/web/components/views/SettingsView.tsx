@@ -44,6 +44,26 @@ export function SettingsView() {
   // Add system state
   const [newSysName, setNewSysName] = useState("");
   const [newSysUrl, setNewSysUrl] = useState("");
+  const [restartingAgent, setRestartingAgent] = useState(false);
+
+  const handleRestartAgent = async () => {
+    try {
+      setRestartingAgent(true);
+      await api.system.restartAgent();
+      addNotification({
+        title: "Agent Restart Initiated",
+        message: "GOD REMORT Agent is restarting in the background. Reconnecting in 3 seconds...",
+        type: "info"
+      });
+      setTimeout(() => {
+        handleTestConnection();
+        setRestartingAgent(false);
+      }, 3500);
+    } catch (e: any) {
+      addNotification({ title: "Restart Failed", message: e.message, type: "error" });
+      setRestartingAgent(false);
+    }
+  };
 
   const handleSaveUrl = () => {
     setAgentUrl(inputUrl);
@@ -331,6 +351,25 @@ export function SettingsView() {
             {testResult}
           </p>
         )}
+      </div>
+
+      {/* 5. 24/7 Background Agent Administration */}
+      <div className="p-5 rounded-3xl bg-omni-surface border border-omni-border space-y-4">
+        <h3 className="text-xs font-bold text-white uppercase tracking-wider flex items-center space-x-2">
+          <Server className="w-4 h-4 text-omni-cyan" />
+          <span>Workstation Agent Management</span>
+        </h3>
+        <p className="text-xs text-omni-muted leading-relaxed">
+          Need to refresh the backend without accessing your laptop? Tap below to restart the background agent cleanly.
+        </p>
+        <button
+          onClick={handleRestartAgent}
+          disabled={restartingAgent}
+          className="px-4 py-2.5 rounded-xl bg-cyan-950/80 hover:bg-cyan-900 border border-cyan-500/40 text-cyan-300 hover:text-white text-xs font-semibold flex items-center space-x-2 transition-all active:scale-95 shadow-lg shadow-cyan-950/30"
+        >
+          <RefreshCw className={`w-3.5 h-3.5 ${restartingAgent ? "animate-spin" : ""}`} />
+          <span>{restartingAgent ? "Restarting Agent..." : "Restart GOD REMORT Agent"}</span>
+        </button>
       </div>
     </div>
   );

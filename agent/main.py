@@ -2,6 +2,10 @@ import asyncio
 import json
 import logging
 import sys
+import os
+import time
+import threading
+import subprocess
 from pathlib import Path
 
 # Ensure root directory is on Python path
@@ -193,6 +197,28 @@ async def power_operation(req: PowerActionRequest, request: Request, current_dev
         device_id=current_device.get("sub"),
         ip=client_ip
     )
+
+@app.post("/api/v1/system/agent/restart")
+async def restart_agent_endpoint(current_device: dict = Depends(require_scope("system:admin"))):
+    """Restarts the GOD REMORT background agent process cleanly."""
+    def _deferred_restart():
+        time.sleep(0.6)
+        python_exe = sys.executable
+        pythonw = Path(python_exe).parent / "pythonw.exe"
+        runner = str(pythonw) if pythonw.exists() else python_exe
+        script = str(Path(__file__).resolve())
+        root_dir = str(Path(__file__).resolve().parent.parent)
+        DETACHED_PROCESS = 0x00000008
+        subprocess.Popen(
+            [runner, script],
+            cwd=root_dir,
+            creationflags=DETACHED_PROCESS,
+            close_fds=True
+        )
+        os._exit(0)
+
+    threading.Thread(target=_deferred_restart, daemon=True).start()
+    return {"status": "success", "message": "GOD REMORT agent restarting in 0.6s"}
 
 # ----------------- Voice Command Engine -----------------
 @app.post("/api/v1/voice/command")
