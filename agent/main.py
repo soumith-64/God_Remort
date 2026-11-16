@@ -59,8 +59,41 @@ async def lifespan(app: FastAPI):
     logger.info(f"Active Network IPs: {[iface['ip'] for iface in pairing_info['network_interfaces']]}")
     logger.info(f"PAIRING PIN: [ {pairing_info['pin']} ]")
     logger.info("=" * 60)
+
+    # Auto-publish tunnel URL to Cloud Discovery registry
+    tunnel_file = Path(__file__).resolve().parent.parent / ".tunnel_url"
+    stop_discovery = asyncio.Event()
+
+    async def _discovery_loop():
+        last_published = ""
+        while not stop_discovery.is_set():
+            try:
+                if tunnel_file.exists():
+                    t_url = tunnel_file.read_text().strip()
+                    if t_url and t_url.startswith("http"):
+                        import urllib.request
+                        clean_pin = pairing_info['pin']
+                        req = urllib.request.Request(
+                            f"https://ntfy.sh/godremort_{clean_pin}",
+                            data=t_url.encode(),
+                            headers={"Title": "GOD REMORT Tunnel Endpoint", "Priority": "high"}
+                        )
+                        urllib.request.urlopen(req, timeout=4)
+                        if t_url != last_published:
+                            logger.info(f"Published Cloud Discovery Endpoint for System ID {clean_pin}: {t_url}")
+                            last_published = t_url
+            except Exception as e:
+                logger.debug(f"Discovery publish check: {e}")
+            try:
+                await asyncio.wait_for(stop_discovery.wait(), timeout=60.0)
+            except asyncio.TimeoutError:
+                pass
+
+    discovery_task = asyncio.create_task(_discovery_loop())
     yield
     # Shutdown
+    stop_discovery.set()
+    discovery_task.cancel()
     logger.info("Shutting down GOD REMORT Agent...")
 
 app = FastAPI(

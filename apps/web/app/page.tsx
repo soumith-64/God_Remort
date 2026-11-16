@@ -45,19 +45,29 @@ export default function Home() {
       setAgentUrl(agentParam);
     }
     if (pinParam && !token) {
-      import("@/lib/api").then(({ api }) => {
-        api.auth.verifyPairing(pinParam, "Mobile Phone").then((res) => {
+      const connectWithPin = async () => {
+        try {
+          if (!agentParam) {
+            const { resolveLaptopUrl } = await import("@/lib/discovery");
+            const discovered = await resolveLaptopUrl(pinParam);
+            if (discovered) {
+              setAgentUrl(discovered);
+            }
+          }
+          const { api } = await import("@/lib/api");
+          const res = await api.auth.verifyPairing(pinParam, "Mobile Phone");
           setAuth(res.token, res.device_id);
           setConnectionStatus("CONNECTED");
           addNotification({
             title: "Quick-Pair Successful",
-            message: "Connected and authenticated via instant QR link.",
+            message: "Connected and authenticated automatically.",
             type: "success"
           });
           setPairingModalOpen(false);
           window.history.replaceState({}, document.title, window.location.pathname);
-        }).catch(() => {});
-      });
+        } catch (_) {}
+      };
+      connectWithPin();
     }
   }, [token, setAgentUrl, setAuth, setConnectionStatus, addNotification, setPairingModalOpen]);
 

@@ -56,6 +56,14 @@ if ($tunnelUrl) {
         }
     }
 
+    # Publish to Global Cloud Discovery Registry for 1-Number Connection
+    try {
+        Invoke-RestMethod -Uri "https://ntfy.sh/godremort_$envPin" -Method Post -Body $tunnelUrl -Headers @{ Title = "GOD REMORT Tunnel"; Priority = "high" } | Out-Null
+        Write-Host "[OK] Published to Cloud Discovery Registry for System ID: $envPin" -ForegroundColor Cyan
+    } catch {
+        Write-Host "[i] Registry publish notice: $($_.Exception.Message)" -ForegroundColor Yellow
+    }
+
     $pairUrl = "$tunnelUrl/?pin=$envPin"
 
     # Generate an elegant visual QR card HTML file and open it on the laptop

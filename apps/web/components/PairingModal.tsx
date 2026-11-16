@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useOmniStore } from "@/stores/useOmniStore";
 import { api } from "@/lib/api";
+import { resolveLaptopUrl } from "@/lib/discovery";
 import { 
   ShieldCheck, 
   QrCode, 
@@ -32,10 +33,12 @@ export function PairingModal() {
   const [pin, setPin] = useState("");
   const [devName, setDevName] = useState(deviceName || "Mobile Device");
   const [loading, setLoading] = useState(false);
+  const [statusText, setStatusText] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [qrCodeData, setQrCodeData] = useState<string | null>(null);
   const [currentPin, setCurrentPin] = useState<string | null>(null);
   const [interfaces, setInterfaces] = useState<any[]>([]);
+  const [showAdvanced, setShowAdvanced] = useState(false);
 
   // Fetch pairing session details when opening QR tab
   const fetchSession = async () => {
@@ -63,27 +66,44 @@ export function PairingModal() {
 
   const handlePair = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!pin || pin.length < 4) {
-      setError("Please enter a valid 6-digit PIN");
+    const cleanPin = pin.trim().replace(/\D/g, "");
+    if (!cleanPin || cleanPin.length < 4) {
+      setError("Please enter your valid 6-digit System ID / PIN");
       return;
     }
 
     try {
       setLoading(true);
       setError(null);
-      const res = await api.auth.verifyPairing(pin, devName);
+
+      // Always locate the live laptop endpoint from cloud discovery for this ID
+      setStatusText("Locating laptop across the cloud...");
+      const discovered = await resolveLaptopUrl(cleanPin);
+      if (discovered) {
+        setAgentUrl(discovered);
+      } else {
+        const isVercel = typeof window !== "undefined" && window.location.hostname.endsWith("vercel.app");
+        const activeHost = agentUrl ? agentUrl.trim() : "";
+        if (isVercel && (!activeHost || activeHost.includes("localhost"))) {
+          throw new Error(`Could not locate laptop online for System ID '${cleanPin}'. Make sure your laptop's start-tunnel script is running!`);
+        }
+      }
+
+      setStatusText("Authenticating connection...");
+      const res = await api.auth.verifyPairing(cleanPin, devName);
       setAuth(res.token, res.device_id);
       setConnectionStatus("CONNECTED");
       addNotification({
-        title: "Device Paired Successfully",
-        message: `Paired as '${devName}' with full administrative scope.`,
+        title: "Connected to Laptop",
+        message: `Paired successfully as '${devName}'.`,
         type: "success"
       });
       setPairingModalOpen(false);
     } catch (e: any) {
-      setError(e.message || "Invalid PIN or pairing expired.");
+      setError(e.message || "Invalid System ID or laptop is offline.");
     } finally {
       setLoading(false);
+      setStatusText(null);
     }
   };
 
@@ -118,7 +138,7 @@ export function PairingModal() {
             }`}
           >
             <KeyRound className="w-3.5 h-3.5" />
-            <span>Enter PIN</span>
+            <span>Connect by ID</span>
           </button>
           <button
             onClick={() => setTab("qr")}
@@ -127,7 +147,7 @@ export function PairingModal() {
             }`}
           >
             <QrCode className="w-3.5 h-3.5" />
-            <span>Laptop QR</span>
+            <span>Camera QR</span>
           </button>
           <button
             onClick={() => setTab("network")}
@@ -140,62 +160,24 @@ export function PairingModal() {
           </button>
         </div>
 
-        {/* Tab 1: Enter PIN */}
+        {/* Tab 1: Connect by System ID */}
         {tab === "pin" && (
           <form onSubmit={handlePair} className="space-y-4">
             <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <label className="text-xs font-medium text-omni-muted">
-                  Laptop Agent Host URL
-                </label>
-                {agentUrl && (
-                  <button
-                    type="button"
-                    onClick={() => setAgentUrl("")}
-                    className="text-[11px] text-rose-400 hover:underline"
-                  >
-                    Clear URL
-                  </button>
-                )}
-              </div>
-              <div className="relative">
-                <input
-                  type="text"
-                  value={agentUrl}
-                  onChange={(e) => setAgentUrl(e.target.value)}
-                  placeholder="https://value-charges-opposite-imagination.trycloudflare.com"
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-omni-card border border-omni-border text-white text-xs font-mono focus:outline-none focus:border-omni-cyan pr-8"
-                />
-                {agentUrl && (
-                  <button
-                    type="button"
-                    onClick={() => setAgentUrl("")}
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-omni-muted hover:text-white"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                )}
-              </div>
-
-              {/* Quick 1-Tap Presets */}
-              <div className="flex flex-wrap gap-1.5 mt-2">
-                <button
-                  type="button"
-                  onClick={() => setAgentUrl("https://value-charges-opposite-imagination.trycloudflare.com")}
-                  className="px-2.5 py-1 rounded-lg bg-cyan-950/80 border border-cyan-500/40 text-omni-cyan text-[11px] font-medium hover:bg-cyan-900/60 active:scale-95 transition-all"
-                >
-                  ⚡ Use Live Cloudflare Tunnel
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setAgentUrl("http://192.168.0.110:8000")}
-                  className="px-2.5 py-1 rounded-lg bg-omni-card border border-omni-border text-omni-muted text-[11px] hover:text-white active:scale-95 transition-all"
-                >
-                  Wi-Fi IP
-                </button>
-              </div>
-              <p className="text-[11px] text-omni-muted mt-1.5">
-                Tap "Use Live Cloudflare Tunnel" for instant mobile connection with zero network blocks.
+              <label className="block text-xs font-semibold text-omni-cyan uppercase tracking-wider mb-2 text-center">
+                Enter 6-Digit System ID
+              </label>
+              <input
+                type="text"
+                maxLength={6}
+                value={pin}
+                onChange={(e) => setPin(e.target.value.replace(/\D/g, ""))}
+                placeholder="101228"
+                autoFocus
+                className="w-full text-center tracking-widest font-mono text-3xl py-3.5 rounded-2xl bg-omni-card border-2 border-cyan-500/40 text-omni-cyan focus:outline-none focus:border-omni-cyan shadow-lg shadow-cyan-500/10"
+              />
+              <p className="text-[11px] text-omni-muted mt-2 text-center">
+                Enter your Master Number (e.g. <span className="text-white font-mono font-bold">101228</span>) to connect from any phone.
               </p>
             </div>
 
@@ -212,23 +194,6 @@ export function PairingModal() {
               />
             </div>
 
-            <div>
-              <label className="block text-xs font-medium text-omni-muted mb-1.5">
-                6-Digit Laptop Pairing PIN
-              </label>
-              <input
-                type="text"
-                maxLength={6}
-                value={pin}
-                onChange={(e) => setPin(e.target.value.replace(/\D/g, ""))}
-                placeholder="101228"
-                className="w-full text-center tracking-widest font-mono text-2xl py-3 rounded-xl bg-omni-card border border-omni-border text-omni-cyan focus:outline-none focus:border-omni-cyan"
-              />
-              <p className="text-[11px] text-omni-muted mt-1 text-center">
-                Enter master PIN 101228 or current console PIN.
-              </p>
-            </div>
-
             {error && (
               <div className="flex items-center space-x-2 p-3 rounded-xl bg-rose-950/60 border border-rose-500/30 text-rose-300 text-xs">
                 <AlertCircle className="w-4 h-4 shrink-0" />
@@ -239,10 +204,61 @@ export function PairingModal() {
             <button
               type="submit"
               disabled={loading || pin.length < 4}
-              className="w-full py-3 rounded-xl font-semibold text-xs tracking-wider uppercase text-black bg-gradient-to-r from-omni-cyan to-indigo-400 hover:opacity-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-cyan-500/20"
+              className="w-full py-3.5 rounded-xl font-bold text-xs tracking-wider uppercase text-black bg-gradient-to-r from-omni-cyan to-indigo-400 hover:opacity-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-cyan-500/20 active:scale-98"
             >
-              {loading ? "Verifying..." : "Verify & Pair Device"}
+              {loading ? (statusText || "Connecting to Laptop...") : "Connect to Laptop"}
             </button>
+
+            {/* Advanced Toggle for Direct Host */}
+            <div className="pt-1 text-center">
+              <button
+                type="button"
+                onClick={() => setShowAdvanced(!showAdvanced)}
+                className="text-[11px] text-omni-muted hover:text-white transition-colors"
+              >
+                {showAdvanced ? "▲ Hide Direct Host Settings" : "▼ Advanced: Direct Host / IP"}
+              </button>
+            </div>
+
+            {showAdvanced && (
+              <div className="p-3.5 rounded-2xl bg-black/40 border border-omni-border space-y-2 animate-fade-in text-left">
+                <label className="text-[11px] text-omni-muted">Direct Laptop Agent Host</label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={agentUrl}
+                    onChange={(e) => setAgentUrl(e.target.value)}
+                    placeholder="https://...trycloudflare.com"
+                    className="w-full px-3 py-2 rounded-xl bg-omni-card border border-omni-border text-white text-xs font-mono pr-7"
+                  />
+                  {agentUrl && (
+                    <button
+                      type="button"
+                      onClick={() => setAgentUrl("")}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 text-omni-muted hover:text-white"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
+                <div className="flex gap-1.5 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => setAgentUrl("https://value-charges-opposite-imagination.trycloudflare.com")}
+                    className="px-2 py-1 rounded-lg bg-cyan-950/70 border border-cyan-500/30 text-omni-cyan text-[10px]"
+                  >
+                    Live Tunnel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setAgentUrl("http://192.168.0.110:8000")}
+                    className="px-2 py-1 rounded-lg bg-omni-card border border-omni-border text-omni-muted text-[10px]"
+                  >
+                    Local Wi-Fi
+                  </button>
+                </div>
+              </div>
+            )}
           </form>
         )}
 
