@@ -20,6 +20,10 @@ _pairing_state: Dict[str, Any] = {
     "pairing_token": None
 }
 
+# Brute-force protection: IP-based failure tracker & lockout
+_failed_attempts: Dict[str, List[float]] = {}
+_lockouts: Dict[str, float] = {}
+
 def hash_token(token: str) -> str:
     return hashlib.sha256(token.encode()).hexdigest()
 
@@ -30,7 +34,8 @@ async def generate_pairing_session() -> Dict[str, Any]:
         pin = custom_pin
         expires_at = time.time() + (365 * 86400) # 1 year for persistent PIN
     else:
-        pin = f"{secrets.randbelow(1000000):06d}"
+        # Cryptographically secure random 6-digit PIN (100000 - 999999)
+        pin = f"{secrets.randbelow(900000) + 100000}"
         expires_at = time.time() + 300  # 5 minutes
     
     pairing_token = secrets.token_urlsafe(24)
@@ -78,8 +83,23 @@ def get_current_pairing_pin() -> Optional[str]:
     return None
 
 async def verify_pairing_request(pin: str, device_name: str, requested_device_id: Optional[str] = None, ip: str = "") -> Dict[str, Any]:
-    """Validates the PIN against custom permanent PIN or ephemeral PIN and issues token."""
+    """Validates the PIN against custom permanent PIN or ephemeral PIN and issues token with brute-force lockout."""
     now = time.time()
+    clean_ip = ip or "unknown"
+
+    # 1. Check if IP is currently locked out
+    if clean_ip in _lockouts:
+        lockout_expiry = _lockouts[clean_ip]
+        if now < lockout_expiry:
+            remaining = int(lockout_expiry - now)
+            raise HTTPException(
+                status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+                detail=f"Too many failed pairing attempts. Security lockout active for {remaining} seconds."
+            )
+        else:
+            del _lockouts[clean_ip]
+            _failed_attempts.pop(clean_ip, None)
+
     custom_pin = await get_custom_pin()
 
     pin_valid = False
@@ -91,8 +111,31 @@ async def verify_pairing_request(pin: str, device_name: str, requested_device_id
         pin_valid = True
 
     if not pin_valid:
-        await log_audit("pairing_failed", details=f"Invalid PIN attempt for device '{device_name}'", ip_address=ip)
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid pairing PIN or PIN expired.")
+        # Record failed attempt
+        attempts = _failed_attempts.get(clean_ip, [])
+        # Keep attempts within last 10 minutes (600s)
+        attempts = [t for t in attempts if now - t < 600]
+        attempts.append(now)
+        _failed_attempts[clean_ip] = attempts
+
+        if len(attempts) >= 5:
+            # Lock out for 15 minutes (900s)
+            _lockouts[clean_ip] = now + 900
+            await log_audit("pairing_lockout", details=f"IP '{clean_ip}' locked out for 15 minutes after 5 failed PIN attempts", ip_address=clean_ip)
+            raise HTTPException(
+                status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+                detail="Too many failed pairing attempts. Your IP has been temporarily locked out for 15 minutes."
+            )
+
+        await log_audit("pairing_failed", details=f"Invalid PIN attempt for device '{device_name}' ({len(attempts)}/5 attempts)", ip_address=clean_ip)
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=f"Invalid pairing PIN. ({5 - len(attempts)} attempts remaining before temporary lockout)"
+        )
+
+    # Success: clear failed attempts
+    _failed_attempts.pop(clean_ip, None)
+    _lockouts.pop(clean_ip, None)
 
     device_id = requested_device_id or f"dev_{secrets.token_hex(8)}"
     scopes = [

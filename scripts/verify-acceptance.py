@@ -1,3 +1,4 @@
+from typing import Any
 import sys
 import os
 from pathlib import Path
@@ -12,8 +13,8 @@ if _venv_site.exists() and str(_venv_site) not in sys.path:
     sys.path.insert(0, str(_venv_site))
 
 # Dynamic imports so static linters without venv awareness don't trigger missing-import warnings
-httpx = importlib.import_module("httpx")
-websockets = importlib.import_module("websockets")
+httpx: Any = importlib.import_module("httpx")
+websockets: Any = importlib.import_module("websockets")
 
 BASE_URL = "http://127.0.0.1:8000"
 WEB_URL = "http://127.0.0.1:3000"

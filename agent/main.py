@@ -309,15 +309,16 @@ async def upload_file(
 ):
     try:
         target_dir = file_manager.resolve_safe_path(destination_dir)
-        dest_file = target_dir / file.filename
+        safe_filename = file.filename or "uploaded_file"
+        dest_file = target_dir / safe_filename
         
         # Write chunks
         with open(dest_file, "wb") as f:
             while chunk := await file.read(1024 * 64):
                 f.write(chunk)
                 
-        await log_audit("file_uploaded", device_id=current_device.get("sub"), details=f"Uploaded '{file.filename}' to '{target_dir}'")
-        return {"status": "uploaded", "path": str(dest_file), "filename": file.filename}
+        await log_audit("file_uploaded", device_id=current_device.get("sub"), details=f"Uploaded '{safe_filename}' to '{target_dir}'")
+        return {"status": "uploaded", "path": str(dest_file), "filename": safe_filename}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 

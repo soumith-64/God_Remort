@@ -127,14 +127,14 @@ async def is_device_valid(device_id: str) -> bool:
 
 async def get_custom_pin() -> Optional[str]:
     import os
-    env_pin = os.getenv("OMNICONTROL_PIN")
-    if env_pin:
+    env_pin = os.getenv("GOD_REMORT_PIN") or os.getenv("OMNICONTROL_PIN")
+    if env_pin and env_pin.strip():
         return env_pin.strip()
     try:
         async with aiosqlite.connect(DB_PATH) as db:
             async with db.execute("SELECT value FROM system_settings WHERE key = 'custom_pin'") as cursor:
                 row = await cursor.fetchone()
-                if row:
+                if row and str(row[0]).strip():
                     return str(row[0]).strip()
     except Exception:
         pass

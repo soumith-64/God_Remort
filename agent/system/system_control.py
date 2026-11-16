@@ -8,7 +8,7 @@ class SystemControl:
     def __init__(self):
         pass
 
-    def _get_volume_endpoint(self):
+    def _get_volume_endpoint(self) -> Any:
         from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
         from comtypes import CLSCTX_ALL
 
@@ -26,9 +26,9 @@ class SystemControl:
     def get_audio_volume(self) -> Dict[str, Any]:
         """Retrieves Windows Master Audio volume and mute status via Core Audio."""
         try:
-            volume = self._get_volume_endpoint()
-            level = volume.GetMasterVolumeLevelScalar()
-            mute = volume.GetMute()
+            volume: Any = self._get_volume_endpoint()
+            level = getattr(volume, "GetMasterVolumeLevelScalar")()
+            mute = getattr(volume, "GetMute")()
             return {
                 "available": True,
                 "volume_percent": int(round(level * 100)),
@@ -45,17 +45,17 @@ class SystemControl:
     def set_audio_volume(self, percent: int, mute: Optional[bool] = None) -> Dict[str, Any]:
         """Sets Windows Master Audio volume level (0-100) and mute state."""
         try:
-            volume = self._get_volume_endpoint()
+            volume: Any = self._get_volume_endpoint()
             scalar = max(0.0, min(1.0, percent / 100.0))
-            volume.SetMasterVolumeLevelScalar(scalar, None)
+            getattr(volume, "SetMasterVolumeLevelScalar")(scalar, None)
 
             if mute is not None:
-                volume.SetMute(1 if mute else 0, None)
+                getattr(volume, "SetMute")(1 if mute else 0, None)
 
             return {
                 "status": "success",
                 "volume_percent": percent,
-                "is_muted": bool(volume.GetMute())
+                "is_muted": bool(getattr(volume, "GetMute")())
             }
         except Exception as e:
             raise RuntimeError(f"Failed to set audio volume: {str(e)}")

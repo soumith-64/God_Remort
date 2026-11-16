@@ -167,7 +167,7 @@ export function VoiceCommandModal() {
       });
       setPinInput("");
     } catch (err: any) {
-      setPinError(err.message || "Invalid PIN. Default PIN is 123456.");
+      setPinError(err.message || "Invalid PIN. Please check the code displayed on your laptop screen.");
     } finally {
       setPinLoading(false);
     }
@@ -308,7 +308,7 @@ export function VoiceCommandModal() {
                     setPinInput(e.target.value);
                     setPinError(null);
                   }}
-                  placeholder="Enter PIN (e.g. 123456)"
+                  placeholder="Enter 6-Digit PIN"
                   className="w-full text-center tracking-[0.25em] font-mono text-lg py-3 px-4 rounded-xl bg-[#141926] border border-[#23293e] text-white focus:outline-none focus:border-cyan-400"
                   autoFocus
                 />
@@ -336,7 +336,7 @@ export function VoiceCommandModal() {
                 </button>
 
                 <p className="text-[11px] text-center text-slate-500">
-                  Default permanent PIN: <span className="font-mono text-cyan-400 font-bold">123456</span>
+                  Enter the pairing PIN displayed on your laptop terminal.
                 </p>
               </form>
             </div>

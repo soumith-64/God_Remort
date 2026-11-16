@@ -7,3 +7,5 @@ search-path = [
 
 [errors]
 missing-import = false
+missing-attribute = false
+unsupported-operation = false

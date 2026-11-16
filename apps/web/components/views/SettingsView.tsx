@@ -143,7 +143,7 @@ export function SettingsView() {
               Setup Your Own Permanent PIN
             </h3>
             <p className="text-[11px] text-omni-muted">
-              Choose your own PIN (e.g. 1234 or 123456) so you never need to check random codes again.
+              Choose your own private secret PIN so only you can pair new mobile devices.
             </p>
           </div>
         </div>
@@ -154,7 +154,7 @@ export function SettingsView() {
               type="text"
               value={customPinInput}
               onChange={(e) => setCustomPinInput(e.target.value.replace(/\D/g, ""))}
-              placeholder="Enter your new permanent PIN (e.g. 123456)"
+              placeholder="Enter your secret PIN (e.g. 849201)"
               className="flex-1 px-3.5 py-2.5 rounded-xl bg-omni-card border border-omni-border text-xs font-mono text-white focus:outline-none focus:border-omni-cyan text-center tracking-widest text-base"
             />
             <button

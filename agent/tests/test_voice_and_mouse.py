@@ -27,9 +27,14 @@ def test_screen_streamer_relative_move():
 
 def test_voice_api_endpoint():
     with TestClient(app) as client:
+        # Initiate pairing to get active dynamic PIN
+        init_res = client.post("/api/v1/auth/pair/initiate")
+        assert init_res.status_code == 200
+        pin = init_res.json()["pin"]
+
         # Pair first
         pair_res = client.post("/api/v1/auth/pair/verify", json={
-            "pin": "123456",
+            "pin": pin,
             "device_name": "TestVoiceDevice"
         })
         assert pair_res.status_code == 200

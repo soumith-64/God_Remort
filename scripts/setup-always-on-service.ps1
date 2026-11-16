@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
     Configures GOD REMORT Agent to run 24/7 in the background with automatic restart on Windows 11.
 .DESCRIPTION
