@@ -16,8 +16,8 @@ class AppManager:
             "vscode": {
                 "name": "Visual Studio Code",
                 "paths": [
-                    r"C:\Users\soumi\AppData\Local\Programs\Microsoft VS Code\bin\code.cmd",
                     r"C:\Users\soumi\AppData\Local\Programs\Microsoft VS Code\Code.exe",
+                    r"C:\Users\soumi\AppData\Local\Programs\Microsoft VS Code\bin\code.cmd",
                     "code"
                 ],
                 "icon": "code",
@@ -461,42 +461,70 @@ class AppManager:
         """Launches ANY application by name, ID, shortcut (.lnk), URI protocol, or direct path."""
         target = self.resolve_any_app(app_id_or_path) or app_id_or_path
 
-        # If it's a URI protocol like "ms-settings:" or "calc:"
-        if target.endswith(":"):
-            os.startfile(target)
-            return {"status": "launched", "executable": target, "method": "shell_uri"}
+        # If target is a directory, find primary executable inside
+        if os.path.isdir(target):
+            candidates = list(Path(target).glob("*.exe"))
+            if candidates:
+                dir_name = Path(target).name.lower()
+                matched = [c for c in candidates if dir_name in c.name.lower()]
+                target = str(matched[0] if matched else candidates[0])
 
-        # If it's a .lnk shortcut file
-        if target.lower().endswith(".lnk") and os.path.exists(target):
-            os.startfile(target)
-            return {"status": "launched", "executable": target, "method": "start_menu_shortcut"}
+        args_str = " ".join(args) if args else ""
 
-        # If it's a file or executable on system PATH
+        # Method 1: Win32 ShellExecute (launches visible window directly in active user session)
+        try:
+            import win32api
+            import win32con
+            res = win32api.ShellExecute(0, "open", target, args_str, None, win32con.SW_SHOWNORMAL)
+            if res > 32:
+                return {
+                    "status": "launched",
+                    "executable": target,
+                    "method": "win32_shellexecute"
+                }
+        except Exception:
+            pass
+
+        # Method 2: os.startfile (Windows native ShellExecute wrapper)
+        try:
+            if not args_str:
+                os.startfile(target)
+                return {
+                    "status": "launched",
+                    "executable": target,
+                    "method": "os_startfile"
+                }
+        except Exception:
+            pass
+
+        # Method 3: cmd.exe start (Windows shell process launcher)
+        try:
+            cmd = f'start "" "{target}" {args_str}'.strip()
+            subprocess.Popen(cmd, shell=True)
+            return {
+                "status": "launched",
+                "executable": target,
+                "method": "shell_cmd_start"
+            }
+        except Exception:
+            pass
+
+        # Method 4: direct subprocess.Popen
         from shutil import which
         resolved_bin = target if os.path.exists(target) else which(target)
         if resolved_bin:
-            cmd = [resolved_bin]
+            cmd_list = [resolved_bin]
             if args:
-                cmd.extend(args)
-            proc = subprocess.Popen(
-                cmd,
-                creationflags=subprocess.DETACHED_PROCESS | subprocess.CREATE_NEW_PROCESS_GROUP,
-                close_fds=True,
-                shell=False
-            )
+                cmd_list.extend(args)
+            proc = subprocess.Popen(cmd_list)
             return {
                 "status": "launched",
                 "pid": proc.pid,
                 "executable": resolved_bin,
-                "args": args or []
+                "method": "subprocess_popen"
             }
 
-        # Fallback to os.startfile for registered Windows shell commands
-        try:
-            os.startfile(target)
-            return {"status": "launched", "executable": target, "method": "shell_fallback"}
-        except Exception as e:
-            raise FileNotFoundError(f"Could not open application '{app_id_or_path}': {str(e)}")
+        raise FileNotFoundError(f"Could not open application '{app_id_or_path}'.")
 
     def control_window(self, hwnd: int, action: str) -> Dict[str, Any]:
         """Controls window state: focus, minimize, maximize, restore, close."""

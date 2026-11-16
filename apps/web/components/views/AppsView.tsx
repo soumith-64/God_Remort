@@ -91,10 +91,14 @@ export function AppsView() {
       await api.apps.launch(appIdOrPath);
       addNotification({
         title: "Application Launched",
-        message: `${name} is now running on your laptop. You can switch to Desktop view to control it.`,
+        message: `${name} opened on your laptop. Switching to Desktop...`,
         type: "success"
       });
       fetchRunning();
+      // Auto-switch to desktop after brief moment so user can immediately control the launched app
+      setTimeout(() => {
+        setActiveTab("desktop");
+      }, 1000);
     } catch (e: any) {
       addNotification({ title: "Launch Failed", message: e.message, type: "error" });
     } finally {
@@ -226,7 +230,12 @@ export function AppsView() {
             {shortcuts.map((sc) => (
               <div
                 key={sc.id}
-                className="p-3.5 rounded-2xl bg-omni-surface border border-omni-border flex items-center justify-between hover:border-cyan-500/30 transition-all"
+                onClick={() => handleLaunch(sc.id, sc.name)}
+                className={`p-3.5 rounded-2xl bg-omni-surface border border-omni-border flex items-center justify-between cursor-pointer transition-all active:scale-98 ${
+                  launchingApp === sc.name
+                    ? "border-cyan-500 bg-cyan-950/40 shadow-lg shadow-cyan-500/10"
+                    : "hover:border-cyan-500/40 hover:bg-omni-card"
+                }`}
               >
                 <div className="flex items-center space-x-3 min-w-0 pr-2">
                   <div className="p-2 rounded-xl bg-omni-card border border-omni-border shrink-0">
@@ -241,12 +250,25 @@ export function AppsView() {
                 </div>
 
                 <button
-                  onClick={() => handleLaunch(sc.id, sc.name)}
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleLaunch(sc.id, sc.name);
+                  }}
                   disabled={launchingApp === sc.name}
                   className="px-3 py-1.5 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 active:scale-95 border border-cyan-500/30 text-cyan-300 text-xs font-semibold flex items-center space-x-1 shrink-0"
                 >
-                  <Play className="w-3 h-3 fill-current" />
-                  <span>Launch</span>
+                  {launchingApp === sc.name ? (
+                    <>
+                      <RefreshCw className="w-3 h-3 animate-spin text-cyan-400" />
+                      <span>Opening...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Play className="w-3 h-3 fill-current" />
+                      <span>Launch</span>
+                    </>
+                  )}
                 </button>
               </div>
             ))}
@@ -363,7 +385,12 @@ export function AppsView() {
             {filteredInstalled.slice(0, 150).map((app, idx) => (
               <div
                 key={idx}
-                className="p-3 rounded-2xl bg-omni-surface border border-omni-border flex items-center justify-between hover:border-cyan-500/30 transition-all"
+                onClick={() => handleLaunch(app.name, app.name)}
+                className={`p-3 rounded-2xl bg-omni-surface border border-omni-border flex items-center justify-between cursor-pointer transition-all active:scale-98 ${
+                  launchingApp === app.name
+                    ? "border-cyan-500 bg-cyan-950/40 shadow-lg shadow-cyan-500/10"
+                    : "hover:border-cyan-500/40 hover:bg-omni-card"
+                }`}
               >
                 <div className="min-w-0 pr-2">
                   <div className="text-xs font-bold text-white truncate">{app.name}</div>
@@ -373,13 +400,23 @@ export function AppsView() {
                 </div>
 
                 <button
-                  onClick={() => handleLaunch(app.install_location || app.name, app.name)}
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleLaunch(app.name, app.name);
+                  }}
                   disabled={launchingApp === app.name}
                   className="px-2.5 py-1.5 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 active:scale-95 text-cyan-300 border border-cyan-500/30 text-xs font-semibold flex items-center space-x-1 shrink-0"
                   title={`Launch ${app.name}`}
                 >
-                  <Play className="w-3 h-3 fill-current" />
-                  <span>Launch</span>
+                  {launchingApp === app.name ? (
+                    <RefreshCw className="w-3 h-3 animate-spin text-cyan-400" />
+                  ) : (
+                    <>
+                      <Play className="w-3 h-3 fill-current" />
+                      <span>Launch</span>
+                    </>
+                  )}
                 </button>
               </div>
             ))}
