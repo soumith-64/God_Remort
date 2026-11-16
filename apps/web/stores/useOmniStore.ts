@@ -133,21 +133,22 @@ interface OmniStore {
 }
 
 const getInitialAgentUrl = () => {
-  if (typeof window === "undefined") return "http://localhost:8000";
+  if (typeof window === "undefined") return process.env.NEXT_PUBLIC_DEFAULT_AGENT_URL || "http://localhost:8000";
   const saved = localStorage.getItem("omni_agent_url");
   if (saved) return saved;
-  return window.location.origin;
+  return process.env.NEXT_PUBLIC_DEFAULT_AGENT_URL || window.location.origin;
 };
 
 const getInitialSystems = (): SystemProfile[] => {
-  if (typeof window === "undefined") return [{ id: "default", name: "Primary Workstation", url: "http://localhost:8000" }];
+  const defaultUrl = process.env.NEXT_PUBLIC_DEFAULT_AGENT_URL || (typeof window !== "undefined" ? window.location.origin : "http://localhost:8000");
+  if (typeof window === "undefined") return [{ id: "default", name: "Primary Workstation", url: defaultUrl }];
   const saved = localStorage.getItem("omni_systems");
   if (saved) {
     try {
       return JSON.parse(saved);
     } catch (_) {}
   }
-  return [{ id: "default", name: "Primary Workstation", url: window.location.origin }];
+  return [{ id: "default", name: "Primary Workstation", url: defaultUrl }];
 };
 
 export const useOmniStore = create<OmniStore>((set, get) => ({
